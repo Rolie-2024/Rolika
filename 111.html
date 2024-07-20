@@ -19,27 +19,27 @@
             height: 100%;
             background: url('https://i.imgur.com/UB2e2db.png') no-repeat center center fixed;
             background-size: cover;
-            opacity: 0.70; /* Átlátszóság beállítása */
-            z-index: -1; /* Háttérben tartás */
+            opacity: 0.15;
+            z-index: -1;
         }
         .container {
             max-width: 800px;
             margin: auto;
-            background-color: rgba(255, 255, 255, 0.85); /* Halvány fehér háttérszín */
+            background-color: rgba(255, 255, 255, 0.85);
             padding: 20px;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
             position: relative;
-            z-index: 1; /* Előtérben tartás */
+            z-index: 1;
         }
         .header {
             text-align: center;
             margin-bottom: 20px;
         }
         .header h1 {
-            color: black; /* Fekete szín */
+            color: black;
         }
         .header span {
-            color: #FF6347; /* Piros szín az INK részre */
+            color: #FF6347;
         }
         .header img {
             max-width: 100px;
@@ -57,14 +57,14 @@
         }
         input[type="submit"] {
             margin-top: 20px;
-            background-color: #0000FF; /* Kék szín */
+            background-color: #0000FF;
             color: white;
             border: none;
             padding: 10px;
             cursor: pointer;
         }
         input[type="submit"]:hover {
-            background-color: #000099; /* Sötétebb kék szín hover esetén */
+            background-color: #000099;
         }
         .consent {
             margin-top: 20px;
@@ -81,8 +81,7 @@
             <h1>Posith<span class="important">INK</span> Tattooshop</h1>
         </div>
         <h2>Einverständniserklärung für Tätowierung</h2>
-        <form id="tattooForm" action="/submit" method="post">
-            
+        <form id="tattooForm" action="https://formspree.io/f/xldrgeak" method="post">
             <label for="name">Ich,</label>
             <input type="text" id="name" name="name" placeholder="(Name des Kunden)" required>
 
@@ -148,7 +147,7 @@
             <input type="date" id="consent_date" name="consent_date" required>
 
             <div class="consent">
-                <label for="consent_confirm"><strong>Ich bestätige, dass ich die Risiken und möglichen Komplikationen der Tätowierung verstanden habe und damit einverstanden bin:</strong></label>
+                <label for="consent_confirm"><strong>Ich bestätige, dass ich die Risiken und möglichen Komplikationen der Tätowierung verstanden habe unddamit einverstanden bin:</strong></label>
                 <label><input type="radio" id="consent_confirm_yes" name="consent_confirm" value="yes" required> Ja, ich bin damit einverstanden.</label>
                 <label><input type="radio" id="consent_confirm_no" name="consent_confirm" value="no"> Nein, ich bin damit nicht einverstanden.</label>
             </div>
