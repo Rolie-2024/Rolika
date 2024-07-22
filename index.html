@@ -50,12 +50,14 @@
       });
 
       // Add points to Firestore
-      async function savePoints(name, phone, points) {
+      async function savePoints(name, phone, euros) {
+        const points = Math.floor(euros / 10);
         try {
           await addDoc(collection(db, 'points'), {
             name: name,
             phone: phone,
-            points: parseInt(points),
+            points: points,
+            euros: euros,
             timestamp: new Date()
           });
           console.log('Points saved successfully');
@@ -76,7 +78,7 @@
           pointsList.innerHTML = '';
           querySnapshot.forEach((doc) => {
             let li = document.createElement('li');
-            li.textContent = `${doc.data().name} - Points: ${doc.data().points}`;
+            li.textContent = `${doc.data().name} - Points: ${doc.data().points} (Euros: ${doc.data().euros.toFixed(2)})`;
             pointsList.appendChild(li);
           });
         } catch (error) {
@@ -93,9 +95,10 @@
           querySnapshot.forEach((doc) => {
             const data = doc.data();
             if (customerPoints[data.name]) {
-              customerPoints[data.name] += data.points;
+              customerPoints[data.name].points += data.points;
+              customerPoints[data.name].euros += data.euros;
             } else {
-              customerPoints[data.name] = data.points;
+              customerPoints[data.name] = { points: data.points, euros: data.euros };
             }
           });
           updateTotalPoints(customerPoints);
@@ -108,9 +111,13 @@
       function updateTotalPoints(customerPoints) {
         let totalPointsDiv = document.getElementById('total-points');
         totalPointsDiv.innerHTML = '';
-        for (const [name, points] of Object.entries(customerPoints)) {
+        for (const [name, data] of Object.entries(customerPoints)) {
           let div = document.createElement('div');
-          div.textContent = `${name}: ${points} points`;
+          div.textContent = `${name}: ${data.points} points (${data.euros.toFixed(2)} EUR)`;
+          div.style.border = '2px solid green';
+          div.style.margin = '5px';
+          div.style.padding = '10px';
+          div.style.borderRadius = '5px';
           totalPointsDiv.appendChild(div);
         }
       }
@@ -121,8 +128,8 @@
           e.preventDefault();
           const name = document.getElementById('name').value;
           const phone = document.getElementById('phone').value;
-          const points = document.getElementById('points').value;
-          await savePoints(name, phone, points);
+          const euros = parseFloat(document.getElementById('euros').value);
+          await savePoints(name, phone, euros);
         });
 
         document.getElementById('login-form').addEventListener('submit', async (e) => {
@@ -150,7 +157,7 @@
             color: #444;
         }
         form {
-            background: rgba(255, 255, 255, 0.85);
+            background: #d4edda; /* Light green background for forms */
             padding: 20px;
             border-radius: 5px;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
@@ -167,7 +174,7 @@
             box-sizing: border-box;
         }
         button {
-            background-color: #333;
+            background-color: #007bff; /* Blue color for submit button */
             color: #fff;
             padding: 10px 20px;
             border: none;
@@ -175,7 +182,7 @@
             cursor: pointer;
         }
         button:hover {
-            background-color: #555;
+            background-color: #0056b3;
         }
         ul {
             list-style-type: none;
@@ -191,7 +198,6 @@
         #total-points {
             font-weight: bold;
             margin-top: 20px;
-            border: 2px solid green;
             padding: 10px;
             text-align: left;
             display: inline-block;
@@ -217,8 +223,8 @@
             <input type="text" id="name" name="name" autocomplete="name" required>
             <label for="phone">Phone:</label>
             <input type="tel" id="phone" name="phone" autocomplete="tel" required>
-            <label for="points">Points:</label>
-            <input type="number" id="points" name="points" autocomplete="off" required>
+            <label for="euros">Euros:</label>
+            <input type="number" id="euros" name="euros" step="0.01" autocomplete="off" required>
             <button type="submit">Submit</button>
         </form>
         <div id="total-points">Total Points:</div>
