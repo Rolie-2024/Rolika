@@ -8,7 +8,7 @@
     <script type="module">
       // Import the functions you need from the SDKs you need
       import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.4/firebase-app.js";
-      import { getFirestore, collection, addDoc, getDocs, query, orderBy } from "https://www.gstatic.com/firebasejs/10.12.4/firebase-firestore.js";
+      import { getFirestore, collection, addDoc, getDocs, query, orderBy, where } from "https://www.gstatic.com/firebasejs/10.12.4/firebase-firestore.js";
 
       // Your web app's Firebase configuration
       const firebaseConfig = {
@@ -60,19 +60,48 @@
         }
       }
 
+      // Get total points for the email
+      async function getTotalPoints(email) {
+        try {
+          const q = query(collection(db, 'points'), where('email', '==', email));
+          const querySnapshot = await getDocs(q);
+          let totalPoints = 0;
+          querySnapshot.forEach((doc) => {
+            totalPoints += doc.data().points;
+          });
+          return totalPoints;
+        } catch (error) {
+          console.error('Error fetching total points: ', error);
+          return 0;
+        }
+      }
+
       // Form submission handler
       document.addEventListener('DOMContentLoaded', () => {
-        document.getElementById('point-form').addEventListener('submit', (e) => {
+        document.getElementById('point-form').addEventListener('submit', async (e) => {
           e.preventDefault();
           const name = document.getElementById('name').value;
           const email = document.getElementById('email').value;
           const phone = document.getElementById('phone').value;
           const points = document.getElementById('points').value;
-          savePoints(name, email, phone, points);
+          await savePoints(name, email, phone, points);
+          updateTotalPoints(email);
+        });
+
+        document.getElementById('email').addEventListener('blur', async (e) => {
+          const email = e.target.value;
+          if (email) {
+            updateTotalPoints(email);
+          }
         });
 
         fetchPoints();
       });
+
+      async function updateTotalPoints(email) {
+        const totalPoints = await getTotalPoints(email);
+        document.getElementById('total-points').textContent = `Total Points: ${totalPoints}`;
+      }
     </script>
 
     <style>
@@ -124,6 +153,10 @@
             border-radius: 5px;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
         }
+        #total-points {
+            font-weight: bold;
+            margin-top: 20px;
+        }
     </style>
 </head>
 <body>
@@ -139,6 +172,7 @@
         <input type="number" id="points" name="points" autocomplete="off" required>
         <button type="submit">Submit</button>
     </form>
+    <div id="total-points">Total Points: 0</div>
     <h2>Collected Points</h2>
     <ul id="points-list"></ul>
 </body>
