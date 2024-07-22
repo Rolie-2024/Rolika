@@ -4,9 +4,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>PosithINK Tattoo Shop Point Collector</title>
-    <script defer src="https://www.gstatic.com/firebasejs/8.7.1/firebase-app.js"></script>
-    <script defer src="https://www.gstatic.com/firebasejs/8.7.1/firebase-firestore.js"></script>
-    <script defer src="app.js"></script>
+    <!-- Firebase App (the core Firebase SDK) is always required and must be listed first -->
+    <script src="https://www.gstatic.com/firebasejs/8.7.1/firebase-app.js"></script>
+
+    <!-- Add Firebase products that you want to use -->
+    <script src="https://www.gstatic.com/firebasejs/8.7.1/firebase-firestore.js"></script>
+
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -60,20 +63,21 @@
 </head>
 <body>
     <h1>PosithINK Tattoo Shop Point Collector</h1>
-    <form id="point-form">
+    <form id="point-form" autocomplete="on">
         <label for="name">Name:</label>
-        <input type="text" id="name" name="name" required>
+        <input type="text" id="name" name="name" autocomplete="name" required>
         <label for="email">Email:</label>
-        <input type="email" id="email" name="email" required>
+        <input type="email" id="email" name="email" autocomplete="email" required>
         <label for="phone">Phone:</label>
-        <input type="text" id="phone" name="phone" required>
+        <input type="tel" id="phone" name="phone" autocomplete="tel" required>
         <label for="points">Points:</label>
-        <input type="number" id="points" name="points" required>
+        <input type="number" id="points" name="points" autocomplete="off" required>
         <button type="submit">Submit</button>
     </form>
     <h2>Collected Points</h2>
     <ul id="points-list"></ul>
 
+    <!-- Firebase configuration and initialization -->
     <script>
         // Your web app's Firebase configuration
         var firebaseConfig = {
@@ -93,3 +97,4 @@
     <script src="app.js"></script>
 </body>
 </html>
+
