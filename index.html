@@ -8,7 +8,7 @@
     <script type="module">
       // Import the functions you need from the SDKs you need
       import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.4/firebase-app.js";
-      import { getFirestore, collection, addDoc, getDocs, query, orderBy } from "https://www.gstatic.com/firebasejs/10.12.4/firebase-firestore.js";
+      import { getFirestore, collection, addDoc, getDocs, query, where, orderBy } from "https://www.gstatic.com/firebasejs/10.12.4/firebase-firestore.js";
       import { getAuth, signInWithEmailAndPassword, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.4/firebase-auth.js";
 
       // Your web app's Firebase configuration
@@ -50,7 +50,7 @@
       });
 
       // Add points to Firestore
-      async function savePoints(name, phone, euros) {
+      async function savePoints(name, phone, euros, date) {
         const points = Math.floor(euros / 10);
         try {
           await addDoc(collection(db, 'points'), {
@@ -58,6 +58,7 @@
             phone: phone,
             points: points,
             euros: euros,
+            date: date,
             timestamp: new Date()
           });
           console.log('Points saved successfully');
@@ -122,6 +123,30 @@
         }
       }
 
+      // Search for customer points
+      async function searchCustomer(name) {
+        try {
+          const q = query(collection(db, 'points'), where('name', '==', name));
+          const querySnapshot = await getDocs(q);
+          let searchResults = document.getElementById('search-results');
+          searchResults.innerHTML = '';
+          let totalPoints = 0;
+          let totalEuros = 0;
+          querySnapshot.forEach((doc) => {
+            let row = document.createElement('tr');
+            row.innerHTML = `<td>${doc.data().name}</td><td>${doc.data().phone}</td><td>${doc.data().points}</td><td>${doc.data().euros.toFixed(2)}</td><td>${doc.data().date}</td>`;
+            searchResults.appendChild(row);
+            totalPoints += doc.data().points;
+            totalEuros += doc.data().euros;
+          });
+          let summaryRow = document.createElement('tr');
+          summaryRow.innerHTML = `<td colspan="2"><strong>Total</strong></td><td><strong>${totalPoints} points</strong></td><td><strong>${totalEuros.toFixed(2)} EUR</strong></td><td></td>`;
+          searchResults.appendChild(summaryRow);
+        } catch (error) {
+          console.error('Error searching customer: ', error);
+        }
+      }
+
       // Form submission handler
       document.addEventListener('DOMContentLoaded', () => {
         document.getElementById('point-form').addEventListener('submit', async (e) => {
@@ -129,7 +154,8 @@
           const name = document.getElementById('name').value;
           const phone = document.getElementById('phone').value;
           const euros = parseFloat(document.getElementById('euros').value);
-          await savePoints(name, phone, euros);
+          const date = document.getElementById('date').value;
+          await savePoints(name, phone, euros, date);
         });
 
         document.getElementById('login-form').addEventListener('submit', async (e) => {
@@ -137,6 +163,12 @@
           const email = document.getElementById('email').value;
           const password = document.getElementById('password').value;
           await login(email, password);
+        });
+
+        document.getElementById('search-form').addEventListener('submit', async (e) => {
+          e.preventDefault();
+          const name = document.getElementById('search-name').value;
+          await searchCustomer(name);
         });
       });
     </script>
@@ -206,6 +238,21 @@
         #main-content {
             display: none;
         }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        table, th, td {
+            border: 1px solid #ddd;
+        }
+        th, td {
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
     </style>
 </head>
 <body>
@@ -225,8 +272,27 @@
             <input type="tel" id="phone" name="phone" autocomplete="tel" required>
             <label for="euros">Euros:</label>
             <input type="number" id="euros" name="euros" step="0.01" autocomplete="off" required>
+            <label for="date">Date and Time:</label>
+            <input type="datetime-local" id="date" name="date" required>
             <button type="submit">Submit</button>
         </form>
+        <form id="search-form">
+            <label for="search-name">Search by Name:</label>
+            <input type="text" id="search-name" name="search-name" required>
+            <button type="submit">Search</button>
+        </form>
+        <table>
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Phone</th>
+                    <th>Points</th>
+                    <th>Euros</th>
+                    <th>Date and Time</th>
+                </tr>
+            </thead>
+            <tbody id="search-results"></tbody>
+        </table>
         <div id="total-points">Total Points:</div>
         <h2>Collected Points</h2>
         <ul id="points-list"></ul>
