@@ -8,7 +8,7 @@
     <script type="module">
       // Import the functions you need from the SDKs you need
       import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.4/firebase-app.js";
-      import { getFirestore } from "https://www.gstatic.com/firebasejs/10.12.4/firebase-firestore.js";
+      import { getFirestore, collection, addDoc, getDocs, query, orderBy } from "https://www.gstatic.com/firebasejs/10.12.4/firebase-firestore.js";
 
       // Your web app's Firebase configuration
       const firebaseConfig = {
@@ -24,9 +24,55 @@
       // Initialize Firebase
       const app = initializeApp(firebaseConfig);
       const db = getFirestore(app);
-      
-      // Export db for use in app.js
-      export { db };
+
+      // Add points to Firestore
+      async function savePoints(name, email, phone, points) {
+        try {
+          await addDoc(collection(db, 'points'), {
+            name: name,
+            email: email,
+            phone: phone,
+            points: parseInt(points),
+            timestamp: new Date()
+          });
+          console.log('Points saved successfully');
+          document.getElementById('point-form').reset();
+          fetchPoints();
+        } catch (error) {
+          console.error('Error saving points: ', error);
+        }
+      }
+
+      // Fetch points from Firestore
+      async function fetchPoints() {
+        try {
+          const q = query(collection(db, 'points'), orderBy('timestamp', 'desc'));
+          const querySnapshot = await getDocs(q);
+          let pointsList = document.getElementById('points-list');
+          pointsList.innerHTML = '';
+          querySnapshot.forEach((doc) => {
+            let li = document.createElement('li');
+            li.textContent = `${doc.data().name} - Points: ${doc.data().points}`;
+            pointsList.appendChild(li);
+          });
+        } catch (error) {
+          console.error('Error fetching points: ', error);
+        }
+      }
+
+      // Form submission handler
+      document.addEventListener('DOMContentLoaded', () => {
+        document.getElementById('point-form').addEventListener('submit', (e) => {
+          e.preventDefault();
+          const name = document.getElementById('name').value;
+          const email = document.getElementById('email').value;
+          const phone = document.getElementById('phone').value;
+          const points = document.getElementById('points').value;
+          savePoints(name, email, phone, points);
+        });
+
+        fetchPoints();
+      });
     </script>
 
     <style>
@@ -95,8 +141,5 @@
     </form>
     <h2>Collected Points</h2>
     <ul id="points-list"></ul>
-
-    <!-- Ensure app.js is loaded after Firebase is initialized -->
-    <script type="module" src="app.js"></script>
 </body>
 </html>
