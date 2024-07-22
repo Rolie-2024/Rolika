@@ -88,5 +88,8 @@
         firebase.initializeApp(firebaseConfig);
         var db = firebase.firestore();
     </script>
+
+    <!-- Ensure app.js is loaded after Firebase is initialized -->
+    <script src="app.js"></script>
 </body>
 </html>
