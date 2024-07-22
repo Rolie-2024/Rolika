@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PosithINK Tattoo Shop Point Collector</title>
+    <script defer src="https://www.gstatic.com/firebasejs/8.7.1/firebase-app.js"></script>
+    <script defer src="https://www.gstatic.com/firebasejs/8.7.1/firebase-firestore.js"></script>
+    <script defer src="app.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            color: #333;
+            text-align: center;
+            padding: 20px;
+        }
+        h1 {
+            color: #444;
+        }
+        form {
+            background: #fff;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            display: inline-block;
+        }
+        label, input {
+            display: block;
+            margin-bottom: 10px;
+        }
+        input {
+            padding: 8px;
+            width: 100%;
+            box-sizing: border-box;
+        }
+        button {
+            background-color: #333;
+            color: #fff;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #555;
+        }
+        ul {
+            list-style-type: none;
+            padding: 0;
+        }
+        li {
+            background: #fff;
+            margin: 10px 0;
+            padding: 10px;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+    </style>
+</head>
+<body>
+    <h1>PosithINK Tattoo Shop Point Collector</h1>
+    <form id="point-form">
+        <label for="name">Name:</label>
+        <input type="text" id="name" name="name" required>
+        <label for="email">Email:</label>
+        <input type="email" id="email" name="email" required>
+        <label for="phone">Phone:</label>
+        <input type="text" id="phone" name="phone" required>
+        <label for="points">Points:</label>
+        <input type="number" id="points" name="points" required>
+        <button type="submit">Submit</button>
+    </form>
+    <h2>Collected Points</h2>
+    <ul id="points-list"></ul>
+
+    <script>
+        // Your web app's Firebase configuration
+        var firebaseConfig = {
+            apiKey: "AIzaSyDVahS6mRJVAoMYXuufHzMfu1YZ8GlkV7k",
+            authDomain: "point-collector-8f37f.firebaseapp.com",
+            projectId: "point-collector-8f37f",
+            storageBucket: "point-collector-8f37f.appspot.com",
+            messagingSenderId: "381353241547",
+            appId: "1:381353241547:web:03352fb82d3bac501ee44e"
+        };
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+        var db = firebase.firestore();
+    </script>
+</body>
+</html>
