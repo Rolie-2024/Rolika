@@ -8,7 +8,7 @@
     <script type="module">
       // Import the functions you need from the SDKs you need
       import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.4/firebase-app.js";
-      import { getFirestore, collection, addDoc, getDocs, query, orderBy, where } from "https://www.gstatic.com/firebasejs/10.12.4/firebase-firestore.js";
+      import { getFirestore, collection, addDoc, getDocs, query, orderBy } from "https://www.gstatic.com/firebasejs/10.12.4/firebase-firestore.js";
 
       // Your web app's Firebase configuration
       const firebaseConfig = {
@@ -26,11 +26,10 @@
       const db = getFirestore(app);
 
       // Add points to Firestore
-      async function savePoints(name, email, phone, points) {
+      async function savePoints(name, phone, points) {
         try {
           await addDoc(collection(db, 'points'), {
             name: name,
-            email: email,
             phone: phone,
             points: parseInt(points),
             timestamp: new Date()
@@ -38,6 +37,7 @@
           console.log('Points saved successfully');
           document.getElementById('point-form').reset();
           fetchPoints();
+          fetchTotalPoints();
         } catch (error) {
           console.error('Error saving points: ', error);
         }
@@ -60,19 +60,34 @@
         }
       }
 
-      // Get total points for the email
-      async function getTotalPoints(email) {
+      // Fetch total points for all customers
+      async function fetchTotalPoints() {
         try {
-          const q = query(collection(db, 'points'), where('email', '==', email));
+          const q = query(collection(db, 'points'));
           const querySnapshot = await getDocs(q);
-          let totalPoints = 0;
+          let customerPoints = {};
           querySnapshot.forEach((doc) => {
-            totalPoints += doc.data().points;
+            const data = doc.data();
+            if (customerPoints[data.name]) {
+              customerPoints[data.name] += data.points;
+            } else {
+              customerPoints[data.name] = data.points;
+            }
           });
-          return totalPoints;
+          updateTotalPoints(customerPoints);
         } catch (error) {
           console.error('Error fetching total points: ', error);
-          return 0;
+        }
+      }
+
+      // Update total points display
+      function updateTotalPoints(customerPoints) {
+        let totalPointsDiv = document.getElementById('total-points');
+        totalPointsDiv.innerHTML = '';
+        for (const [name, points] of Object.entries(customerPoints)) {
+          let div = document.createElement('div');
+          div.textContent = `${name}: ${points} points`;
+          totalPointsDiv.appendChild(div);
         }
       }
 
@@ -81,27 +96,14 @@
         document.getElementById('point-form').addEventListener('submit', async (e) => {
           e.preventDefault();
           const name = document.getElementById('name').value;
-          const email = document.getElementById('email').value;
           const phone = document.getElementById('phone').value;
           const points = document.getElementById('points').value;
-          await savePoints(name, email, phone, points);
-          updateTotalPoints(email);
-        });
-
-        document.getElementById('email').addEventListener('blur', async (e) => {
-          const email = e.target.value;
-          if (email) {
-            updateTotalPoints(email);
-          }
+          await savePoints(name, phone, points);
         });
 
         fetchPoints();
+        fetchTotalPoints();
       });
-
-      async function updateTotalPoints(email) {
-        const totalPoints = await getTotalPoints(email);
-        document.getElementById('total-points').textContent = `Total Points: ${totalPoints}`;
-      }
     </script>
 
     <style>
@@ -156,6 +158,10 @@
         #total-points {
             font-weight: bold;
             margin-top: 20px;
+            border: 2px solid green;
+            padding: 10px;
+            text-align: left;
+            display: inline-block;
         }
     </style>
 </head>
@@ -164,15 +170,13 @@
     <form id="point-form" autocomplete="on">
         <label for="name">Name:</label>
         <input type="text" id="name" name="name" autocomplete="name" required>
-        <label for="email">Email:</label>
-        <input type="email" id="email" name="email" autocomplete="email" required>
         <label for="phone">Phone:</label>
         <input type="tel" id="phone" name="phone" autocomplete="tel" required>
         <label for="points">Points:</label>
         <input type="number" id="points" name="points" autocomplete="off" required>
         <button type="submit">Submit</button>
     </form>
-    <div id="total-points">Total Points: 0</div>
+    <div id="total-points">Total Points:</div>
     <h2>Collected Points</h2>
     <ul id="points-list"></ul>
 </body>
