@@ -4,11 +4,30 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>PosithINK Tattoo Shop Point Collector</title>
-    <!-- Firebase App (the core Firebase SDK) is always required and must be listed first -->
-    <script src="https://www.gstatic.com/firebasejs/8.7.1/firebase-app.js"></script>
+    <!-- Import the Firebase SDKs -->
+    <script type="module">
+      // Import the functions you need from the SDKs you need
+      import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.4/firebase-app.js";
+      import { getFirestore } from "https://www.gstatic.com/firebasejs/10.12.4/firebase-firestore.js";
 
-    <!-- Add Firebase products that you want to use -->
-    <script src="https://www.gstatic.com/firebasejs/8.7.1/firebase-firestore.js"></script>
+      // Your web app's Firebase configuration
+      const firebaseConfig = {
+        apiKey: "AIzaSyDVahS6mRJVAoMYXuufHzMfu1YZ8GlkV7k",
+        authDomain: "point-collector-8f37f.firebaseapp.com",
+        projectId: "point-collector-8f37f",
+        storageBucket: "point-collector-8f37f.appspot.com",
+        messagingSenderId: "381353241547",
+        appId: "1:381353241547:web:9a85b70b419c32811ee44e",
+        measurementId: "G-3BWW13LHSD"
+      };
+
+      // Initialize Firebase
+      const app = initializeApp(firebaseConfig);
+      const db = getFirestore(app);
+      
+      // Export db for use in app.js
+      export { db };
+    </script>
 
     <style>
         body {
@@ -77,24 +96,7 @@
     <h2>Collected Points</h2>
     <ul id="points-list"></ul>
 
-    <!-- Firebase configuration and initialization -->
-    <script>
-        // Your web app's Firebase configuration
-        var firebaseConfig = {
-            apiKey: "AIzaSyDVahS6mRJVAoMYXuufHzMfu1YZ8GlkV7k",
-            authDomain: "point-collector-8f37f.firebaseapp.com",
-            projectId: "point-collector-8f37f",
-            storageBucket: "point-collector-8f37f.appspot.com",
-            messagingSenderId: "381353241547",
-            appId: "1:381353241547:web:03352fb82d3bac501ee44e"
-        };
-        // Initialize Firebase
-        firebase.initializeApp(firebaseConfig);
-        var db = firebase.firestore();
-    </script>
-
     <!-- Ensure app.js is loaded after Firebase is initialized -->
-    <script src="app.js"></script>
+    <script type="module" src="app.js"></script>
 </body>
 </html>
-
