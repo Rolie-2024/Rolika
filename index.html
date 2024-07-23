@@ -147,23 +147,6 @@
         }
       }
 
-      // Upload CSV file and add data to Firestore
-      async function uploadCSV(file) {
-        const reader = new FileReader();
-        reader.onload = async function(event) {
-          const csvData = event.target.result;
-          const rows = csvData.split('\n');
-          for (const row of rows) {
-            const cols = row.split(',');
-            const [name, phone, euros, date] = cols;
-            await savePoints(name, phone, parseFloat(euros), date);
-          }
-          fetchPoints();
-          fetchTotalPoints();
-        };
-        reader.readAsText(file);
-      }
-
       // Form submission handler
       document.addEventListener('DOMContentLoaded', () => {
         document.getElementById('point-form').addEventListener('submit', async (e) => {
@@ -187,45 +170,26 @@
           const name = document.getElementById('search-name').value;
           await searchCustomer(name);
         });
-
-        document.getElementById('csv-upload-form').addEventListener('submit', async (e) => {
-          e.preventDefault();
-          const file = document.getElementById('csv-file').files[0];
-          await uploadCSV(file);
-        });
       });
     </script>
 
-    <!-- Bootstrap CSS -->
-    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
-    <!-- Bootstrap JS, Popper.js, and jQuery -->
-    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-
-    <!-- Content Security Policy -->
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://www.gstatic.com https://www.googleapis.com; style-src 'self' 'unsafe-inline' https://stackpath.bootstrapcdn.com; img-src 'self' data:; connect-src 'self' https://firestore.googleapis.com https://securetoken.googleapis.com;">
-
     <style>
         body {
-            background-image: url('2.png'); /* Cseréld ki a saját háttérképed URL-jére */
-            background-size: cover;
-            background-repeat: no-repeat;
-            background-attachment: fixed;
+            font-family: Arial, sans-serif;
+            background-color: #f0fff0; /* Light green background */
             color: #333;
             text-align: center;
             padding: 20px;
-            background-color: rgba(255, 255, 255, 0.45); /* Átlátszóság hozzáadása a háttérképhez */
         }
         h1 {
             color: #000;
             font-weight: bold;
         }
         h1 span {
-            color: #ff0000; /* Piros szín az "INK" számára */
+            color: #ff0000; /* Red color for "INK" */
         }
         form {
-            background: rgba(255, 255, 255, 0.85); /* Fehér háttér a formok számára */
+            background: rgba(255, 255, 255, 0.85); /* White background for forms */
             padding: 20px;
             border-radius: 5px;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
@@ -242,11 +206,8 @@
             width: 100%;
             box-sizing: border-box;
         }
-        input[autocomplete] {
-            autocomplete: on;
-        }
         button {
-            background-color: #00008b; /* Navy kék szín a gombokhoz */
+            background-color: #00008b; /* Navy blue color for submit button */
             color: #fff;
             padding: 10px 20px;
             border: none;
@@ -293,77 +254,50 @@
         th {
             background-color: #f2f2f2;
         }
-        .logo {
-            width: 150px;
-            margin: 20px auto;
-        }
     </style>
 </head>
 <body>
-    <div class="container">
-        <img src="logo.png" alt="PosithINK Tattooshop Logo" class="logo"> <!-- Cseréld ki a saját logód URL-jére -->
-        <h1 class="display-4">Posith<span class="text-danger">INK</span> Tattooshop Point Collector</h1>
-        <form id="login-form" class="form-inline justify-content-center">
-            <div class="form-group mb-2">
-                <label for="email" class="sr-only">Email:</label>
-                <input type="email" id="email" name="email" class="form-control" placeholder="Email" autocomplete="email" required>
-            </div>
-            <div class="form-group mx-sm-3 mb-2">
-                <label for="password" class="sr-only">Password:</label>
-                <input type="password" id="password" name="password" class="form-control" placeholder="Password" autocomplete="current-password" required>
-            </div>
-            <button type="submit" class="btn btn-primary mb-2">Login</button>
+    <h1>Posith<span>INK</span> Tattooshop
+          Point Collector</h1>
+    <form id="login-form">
+        <label for="email">Email:</label>
+        <input type="email" id="email" name="email" required>
+        <label for="password">Password:</label>
+        <input type="password" id="password" name="password" required>
+        <button type="submit">Login</button>
+    </form>
+    <div id="main-content">
+        <form id="point-form" autocomplete="on">
+            <label for="name">Name:</label>
+            <input type="text" id="name" name="name" autocomplete="name" required>
+            <label for="phone">Phone:</label>
+            <input type="tel" id="phone" name="phone" autocomplete="tel" required>
+            <label for="euros">Euros:</label>
+            <input type="number" id="euros" name="euros" step="0.01" autocomplete="off" required>
+            <label for="date">Date and Time:</label>
+            <input type="datetime-local" id="date" name="date" required>
+            <button type="submit">Submit</button>
         </form>
-        <div id="main-content" class="mt-5">
-            <form id="point-form" class="border p-4 bg-white shadow rounded">
-                <div class="form-group">
-                    <label for="name">Name:</label>
-                    <input type="text" id="name" name="name" class="form-control" autocomplete="name" required>
-                </div>
-                <div class="form-group">
-                    <label for="phone">Phone:</label>
-                    <input type="tel" id="phone" name="phone" class="form-control" autocomplete="tel" required>
-                </div>
-                <div class="form-group">
-                    <label for="euros">Euros:</label>
-                    <input type="number" id="euros" name="euros" class="form-control" step="0.01" required>
-                </div>
-                <div class="form-group">
-                    <label for="date">Date and Time:</label>
-                    <input type="datetime-local" id="date" name="date" class="form-control" required>
-                </div>
-                <button type="submit" class="btn btn-success">Submit</button>
-            </form>
-            <form id="search-form" class="mt-4">
-                <div class="form-group">
-                    <label for="search-name">Search by Name:</label>
-                    <input type="text" id="search-name" name="search-name" class="form-control" autocomplete="name" required>
-                </div>
-                <button type="submit" class="btn btn-info">Search</button>
-            </form>
-            <table class="table table-striped mt-4">
-                <thead>
-                    <tr>
-                        <th>Name</th>
-                        <th>Phone</th>
-                        <th>Points</th>
-                        <th>Euros</th>
-                        <th>Date and Time</th>
-                    </tr>
-                </thead>
-                <tbody id="search-results"></tbody>
-            </table>
-            <div id="total-points" class="bg-white p-4 mt-4 border rounded shadow">Total Points:</div>
-            <h2 class="mt-5">Collected Points</h2>
-            <ul id="points-list" class="list-group"></ul>
-            <form id="csv-upload-form" class="mt-5">
-                <div class="form-group">
-                    <label for="csv-file">Upload CSV File:</label>
-                    <input type="file" id="csv-file" class="form-control-file" accept=".csv" required>
-                </div>
-                <button type="submit" class="btn btn-primary">Upload</button>
-            </form>
-        </div>
+        <form id="search-form">
+            <label for="search-name">Search by Name:</label>
+            <input type="text" id="search-name" name="search-name" required>
+            <button type="submit">Search</button>
+        </form>
+        <table>
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Phone</th>
+                    <th>Points</th>
+                    <th>Euros</th>
+                    <th>Date and Time</th>
+                </tr>
+            </thead>
+            <tbody id="search-results"></tbody>
+        </table>
+        <div id="total-points">Total Points:</div>
+        <h2>Collected Points</h2>
+        <ul id="points-list"></ul>
     </div>
 </body>
 </html>
