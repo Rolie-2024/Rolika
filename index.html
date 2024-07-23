@@ -78,8 +78,10 @@
           let pointsList = document.getElementById('points-list');
           pointsList.innerHTML = '';
           querySnapshot.forEach((doc) => {
+            const data = doc.data();
+            const euros = data.euros !== undefined ? data.euros.toFixed(2) : '0.00';
             let li = document.createElement('li');
-            li.textContent = `${doc.data().name} - Points: ${doc.data().points} (Euros: ${doc.data().euros.toFixed(2)})`;
+            li.innerHTML = `<strong>${data.name}</strong> - Points: ${data.points} (Euros: ${euros})`;
             pointsList.appendChild(li);
           });
         } catch (error) {
@@ -95,11 +97,12 @@
           let customerPoints = {};
           querySnapshot.forEach((doc) => {
             const data = doc.data();
+            const euros = data.euros !== undefined ? data.euros : 0;
             if (customerPoints[data.name]) {
               customerPoints[data.name].points += data.points;
-              customerPoints[data.name].euros += data.euros;
+              customerPoints[data.name].euros += euros;
             } else {
-              customerPoints[data.name] = { points: data.points, euros: data.euros };
+              customerPoints[data.name] = { points: data.points, euros: euros };
             }
           });
           updateTotalPoints(customerPoints);
@@ -113,12 +116,14 @@
         let totalPointsDiv = document.getElementById('total-points');
         totalPointsDiv.innerHTML = '';
         for (const [name, data] of Object.entries(customerPoints)) {
+          const euros = data.euros !== undefined ? data.euros.toFixed(2) : '0.00';
           let div = document.createElement('div');
-          div.textContent = `${name}: ${data.points} points (${data.euros.toFixed(2)} EUR)`;
+          div.innerHTML = `<strong>${name}</strong>: ${data.points} points (${euros} EUR)`;
           div.style.border = '2px solid green';
           div.style.margin = '5px';
           div.style.padding = '10px';
           div.style.borderRadius = '5px';
+          div.style.backgroundColor = '#f0f8ff'; /* Light blue background */
           totalPointsDiv.appendChild(div);
         }
       }
@@ -133,11 +138,13 @@
           let totalPoints = 0;
           let totalEuros = 0;
           querySnapshot.forEach((doc) => {
+            const data = doc.data();
+            const euros = data.euros !== undefined ? data.euros.toFixed(2) : '0.00';
             let row = document.createElement('tr');
-            row.innerHTML = `<td>${doc.data().name}</td><td>${doc.data().phone}</td><td>${doc.data().points}</td><td>${doc.data().euros.toFixed(2)}</td><td>${doc.data().date}</td>`;
+            row.innerHTML = `<td>${data.name}</td><td>${data.phone}</td><td>${data.points}</td><td>${euros}</td><td>${data.date}</td>`;
             searchResults.appendChild(row);
-            totalPoints += doc.data().points;
-            totalEuros += doc.data().euros;
+            totalPoints += data.points;
+            totalEuros += data.euros;
           });
           let summaryRow = document.createElement('tr');
           summaryRow.innerHTML = `<td colspan="2"><strong>Total</strong></td><td><strong>${totalPoints} points</strong></td><td><strong>${totalEuros.toFixed(2)} EUR</strong></td><td></td>`;
@@ -247,6 +254,7 @@
             text-align: left;
             display: inline-block;
             background: rgba(255, 255, 255, 0.85);
+            background-color: #f0f8ff; /* Light blue background */
         }
         #main-content {
             display: none;
@@ -255,6 +263,7 @@
             width: 100%;
             border-collapse: collapse;
             margin-top: 20px;
+            background-color: #f0f8ff; /* Light blue background */
         }
         table, th, td {
             border: 1px solid #ddd;
@@ -318,4 +327,3 @@
     </div>
 </body>
 </html>
-
