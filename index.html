@@ -203,6 +203,9 @@
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 
+    <!-- Content Security Policy -->
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://www.gstatic.com https://www.googleapis.com; style-src 'self' 'unsafe-inline'; object-src 'none';">
+
     <style>
         body {
             background-image: url('2.png'); /* Cseréld ki a saját háttérképed URL-jére */
@@ -237,6 +240,9 @@
             padding: 8px;
             width: 100%;
             box-sizing: border-box;
+        }
+        input[autocomplete] {
+            autocomplete: on;
         }
         button {
             background-color: #00008b; /* Navy kék szín a gombokhoz */
@@ -299,11 +305,11 @@
         <form id="login-form" class="form-inline justify-content-center">
             <div class="form-group mb-2">
                 <label for="email" class="sr-only">Email:</label>
-                <input type="email" id="email" name="email" class="form-control" placeholder="Email" required>
+                <input type="email" id="email" name="email" class="form-control" placeholder="Email" autocomplete="email" required>
             </div>
             <div class="form-group mx-sm-3 mb-2">
                 <label for="password" class="sr-only">Password:</label>
-                <input type="password" id="password" name="password" class="form-control" placeholder="Password" required>
+                <input type="password" id="password" name="password" class="form-control" placeholder="Password" autocomplete="current-password" required>
             </div>
             <button type="submit" class="btn btn-primary mb-2">Login</button>
         </form>
@@ -311,11 +317,11 @@
             <form id="point-form" class="border p-4 bg-white shadow rounded">
                 <div class="form-group">
                     <label for="name">Name:</label>
-                    <input type="text" id="name" name="name" class="form-control" required>
+                    <input type="text" id="name" name="name" class="form-control" autocomplete="name" required>
                 </div>
                 <div class="form-group">
                     <label for="phone">Phone:</label>
-                    <input type="tel" id="phone" name="phone" class="form-control" required>
+                    <input type="tel" id="phone" name="phone" class="form-control" autocomplete="tel" required>
                 </div>
                 <div class="form-group">
                     <label for="euros">Euros:</label>
@@ -330,7 +336,7 @@
             <form id="search-form" class="mt-4">
                 <div class="form-group">
                     <label for="search-name">Search by Name:</label>
-                    <input type="text" id="search-name" name="search-name" class="form-control" required>
+                    <input type="text" id="search-name" name="search-name" class="form-control" autocomplete="name" required>
                 </div>
                 <button type="submit" class="btn btn-info">Search</button>
             </form>
