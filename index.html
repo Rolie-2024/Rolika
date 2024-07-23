@@ -204,7 +204,7 @@
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 
     <!-- Content Security Policy -->
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://www.gstatic.com https://www.googleapis.com; style-src 'self' 'unsafe-inline'; object-src 'none';">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://www.gstatic.com https://www.googleapis.com; style-src 'self' 'unsafe-inline' https://stackpath.bootstrapcdn.com; img-src 'self' data:; connect-src 'self' https://firestore.googleapis.com https://securetoken.googleapis.com;">
 
     <style>
         body {
@@ -215,6 +215,7 @@
             color: #333;
             text-align: center;
             padding: 20px;
+            background-color: rgba(255, 255, 255, 0.45); /* Átlátszóság hozzáadása a háttérképhez */
         }
         h1 {
             color: #000;
