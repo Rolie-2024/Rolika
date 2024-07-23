@@ -173,131 +173,96 @@
       });
     </script>
 
+    <!-- Bootstrap CSS -->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap JS, Popper.js, and jQuery -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
     <style>
         body {
-            font-family: Arial, sans-serif;
-            background-color: #f0fff0; /* Light green background */
-            color: #333;
-            text-align: center;
-            padding: 20px;
-        }
-        h1 {
-            color: #000;
-            font-weight: bold;
+            background-color: #f0fff0; /* Világos zöld háttér */
         }
         h1 span {
-            color: #ff0000; /* Red color for "INK" */
+            color: #ff0000; /* Piros szín az "INK" számára */
         }
-        form {
-            background: rgba(255, 255, 255, 0.85); /* White background for forms */
-            padding: 20px;
-            border-radius: 5px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            display: inline-block;
-            margin-bottom: 20px;
-            max-width: 500px;
+        .border {
+            border: 1px solid #ddd !important;
         }
-        label, input {
-            display: block;
-            margin-bottom: 10px;
+        .rounded {
+            border-radius: 5px !important;
         }
-        input {
-            padding: 8px;
-            width: 100%;
-            box-sizing: border-box;
+        .shadow {
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1) !important;
         }
-        button {
-            background-color: #00008b; /* Navy blue color for submit button */
-            color: #fff;
-            padding: 10px 20px;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-        }
-        button:hover {
-            background-color: #0000cd;
-        }
-        ul {
-            list-style-type: none;
-            padding: 0;
-        }
-        li {
-            background: rgba(255, 255, 255, 0.85);
-            margin: 10px 0;
+        #total-points div {
+            border: 2px solid green;
+            margin: 5px;
             padding: 10px;
             border-radius: 5px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-        }
-        #total-points {
-            font-weight: bold;
-            margin-top: 20px;
-            padding: 10px;
-            text-align: left;
-            display: inline-block;
-            background: rgba(255, 255, 255, 0.85);
-        }
-        #main-content {
-            display: none;
-        }
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 20px;
-        }
-        table, th, td {
-            border: 1px solid #ddd;
-        }
-        th, td {
-            padding: 8px;
-            text-align: left;
-        }
-        th {
-            background-color: #f2f2f2;
         }
     </style>
 </head>
-<body>
-    <h1>Posith<span>INK</span> Tattooshop
-          Point Collector</h1>
-    <form id="login-form">
-        <label for="email">Email:</label>
-        <input type="email" id="email" name="email" required>
-        <label for="password">Password:</label>
-        <input type="password" id="password" name="password" required>
-        <button type="submit">Login</button>
-    </form>
-    <div id="main-content">
-        <form id="point-form" autocomplete="on">
-            <label for="name">Name:</label>
-            <input type="text" id="name" name="name" autocomplete="name" required>
-            <label for="phone">Phone:</label>
-            <input type="tel" id="phone" name="phone" autocomplete="tel" required>
-            <label for="euros">Euros:</label>
-            <input type="number" id="euros" name="euros" step="0.01" autocomplete="off" required>
-            <label for="date">Date and Time:</label>
-            <input type="datetime-local" id="date" name="date" required>
-            <button type="submit">Submit</button>
+<body class="bg-light text-dark text-center py-5">
+    <div class="container">
+        <h1 class="display-4">Posith<span class="text-danger">INK</span> Tattooshop Point Collector</h1>
+        <form id="login-form" class="form-inline justify-content-center">
+            <div class="form-group mb-2">
+                <label for="email" class="sr-only">Email:</label>
+                <input type="email" id="email" name="email" class="form-control" placeholder="Email" required>
+            </div>
+            <div class="form-group mx-sm-3 mb-2">
+                <label for="password" class="sr-only">Password:</label>
+                <input type="password" id="password" name="password" class="form-control" placeholder="Password" required>
+            </div>
+            <button type="submit" class="btn btn-primary mb-2">Login</button>
         </form>
-        <form id="search-form">
-            <label for="search-name">Search by Name:</label>
-            <input type="text" id="search-name" name="search-name" required>
-            <button type="submit">Search</button>
-        </form>
-        <table>
-            <thead>
-                <tr>
-                    <th>Name</th>
-                    <th>Phone</th>
-                    <th>Points</th>
-                    <th>Euros</th>
-                    <th>Date and Time</th>
-                </tr>
-            </thead>
-            <tbody id="search-results"></tbody>
-        </table>
-        <div id="total-points">Total Points:</div>
-        <h2>Collected Points</h2>
-        <ul id="points-list"></ul>
+        <div id="main-content" class="mt-5">
+            <form id="point-form" class="border p-4 bg-white shadow rounded">
+                <div class="form-group">
+                    <label for="name">Name:</label>
+                    <input type="text" id="name" name="name" class="form-control" required>
+                </div>
+                <div class="form-group">
+                    <label for="phone">Phone:</label>
+                    <input type="tel" id="phone" name="phone" class="form-control" required>
+                </div>
+                <div class="form-group">
+                    <label for="euros">Euros:</label>
+                    <input type="number" id="euros" name="euros" class="form-control" step="0.01" required>
+                </div>
+                <div class="form-group">
+                    <label for="date">Date and Time:</label>
+                    <input type="datetime-local" id="date" name="date" class="form-control" required>
+                </div>
+                <button type="submit" class="btn btn-success">Submit</button>
+            </form>
+            <form id="search-form" class="mt-4">
+                <div class="form-group">
+                    <label for="search-name">Search by Name:</label>
+                    <input type="text" id="search-name" name="search-name" class="form-control" required>
+                </div>
+                <button type="submit" class="btn btn-info">Search</button>
+            </form>
+            <table class="table table-striped mt-4">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Phone</th>
+                        <th>Points</th>
+                        <th>Euros</th>
+                        <th>Date and Time</th>
+                    </tr>
+                </thead>
+                <tbody id="search-results"></tbody>
+            </table>
+            <div id="total-points" class="bg-white p-4 mt-4 border rounded shadow">Total Points:</div>
+            <h2 class="mt-5">Collected Points</h2>
+            <ul id="points-list" class="list-group"></ul>
+        </div>
     </div>
 </body>
+</html>
+
 </html>
