@@ -164,8 +164,9 @@
             </div>
 
             <label for="signature">Unterschrift:</label>
-            <canvas id="signature-pad" class="signature-pad"></canvas>
+            <canvas id="signature-pad" class="signature-pad" width="600" height="200"></canvas>
             <textarea id="signature" name="signature" style="display: none;"></textarea>
+            <button type="button" id="clear-signature" class="btn btn-secondary mt-2">Unterschrift löschen</button>
 
             <label for="consent_date">Datum:</label>
             <input type="date" id="consent_date" name="consent_date" required>
@@ -186,6 +187,17 @@
         document.addEventListener('DOMContentLoaded', (event) => {
             const canvas = document.getElementById('signature-pad');
             const signaturePad = new SignaturePad(canvas);
+
+            function resizeCanvas() {
+                const ratio = Math.max(window.devicePixelRatio || 1, 1);
+                canvas.width = canvas.offsetWidth * ratio;
+                canvas.height = canvas.offsetHeight * ratio;
+                canvas.getContext("2d").scale(ratio, ratio);
+                signaturePad.clear(); // otherwise isEmpty() might return incorrect value
+            }
+
+            window.addEventListener("resize", resizeCanvas);
+            resizeCanvas();
 
             document.getElementById('tattooForm').addEventListener('submit', function(e) {
                 if (signaturePad.isEmpty()) {
@@ -213,6 +225,10 @@
                         parentInfo.style.display = 'none';
                     }
                 });
+            });
+
+            document.getElementById('clear-signature').addEventListener('click', function() {
+                signaturePad.clear();
             });
         });
     </script>
