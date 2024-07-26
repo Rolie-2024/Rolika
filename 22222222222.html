@@ -164,7 +164,7 @@
             </div>
 
             <label for="signature">Unterschrift:</label>
-            <div id="signature-pad" class="signature-pad"></div>
+            <canvas id="signature-pad" class="signature-pad"></canvas>
             <textarea id="signature" name="signature" style="display: none;"></textarea>
 
             <label for="consent_date">Datum:</label>
@@ -183,33 +183,36 @@
     <!-- Signature Pad JavaScript library -->
     <script src="https://cdn.jsdelivr.net/npm/signature_pad@4.0.0/dist/signature_pad.umd.min.js"></script>
     <script>
-        const signaturePad = new SignaturePad(document.getElementById('signature-pad'));
+        document.addEventListener('DOMContentLoaded', (event) => {
+            const canvas = document.getElementById('signature-pad');
+            const signaturePad = new SignaturePad(canvas);
 
-        document.getElementById('tattooForm').addEventListener('submit', function(e) {
-            if (signaturePad.isEmpty()) {
-                alert('Bitte unterschreiben Sie das Formular.');
-                e.preventDefault();
-            } else {
-                document.getElementById('signature').value = signaturePad.toDataURL();
-            }
-
-            // Highlight conditions if any
-            const conditions = document.querySelectorAll('input[name="conditions"]:checked');
-            if (conditions.length > 0) {
-                conditions.forEach(condition => {
-                    condition.parentElement.classList.add('highlight');
-                });
-            }
-        });
-
-        document.querySelectorAll('input[name="is_adult"]').forEach((elem) => {
-            elem.addEventListener('change', function() {
-                const parentInfo = document.getElementById('parent-info');
-                if (this.value === 'no') {
-                    parentInfo.style.display = 'block';
+            document.getElementById('tattooForm').addEventListener('submit', function(e) {
+                if (signaturePad.isEmpty()) {
+                    alert('Bitte unterschreiben Sie das Formular.');
+                    e.preventDefault();
                 } else {
-                    parentInfo.style.display = 'none';
+                    document.getElementById('signature').value = signaturePad.toDataURL();
                 }
+
+                // Highlight conditions if any
+                const conditions = document.querySelectorAll('input[name="conditions"]:checked');
+                if (conditions.length > 0) {
+                    conditions.forEach(condition => {
+                        condition.parentElement.classList.add('highlight');
+                    });
+                }
+            });
+
+            document.querySelectorAll('input[name="is_adult"]').forEach((elem) => {
+                elem.addEventListener('change', function() {
+                    const parentInfo = document.getElementById('parent-info');
+                    if (this.value === 'no') {
+                        parentInfo.style.display = 'block';
+                    } else {
+                        parentInfo.style.display = 'none';
+                    }
+                });
             });
         });
     </script>
