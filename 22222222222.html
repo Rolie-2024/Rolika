@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <title>PosithINK Tattooshop - Tattoo-Einverständniserklärung</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            position: relative;
+        }
+        body::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url('https://i.imgur.com/UB2e2db.png') no-repeat center center fixed;
+            background-size: cover;
+            opacity: 0.15;
+            z-index: -1;
+        }
+        .container {
+            max-width: 800px;
+            margin: auto;
+            background-color: rgba(255, 255, 255, 0.85);
+            padding: 20px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            position: relative;
+            z-index: 1;
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .header h1 {
+            color: black;
+        }
+        .header span {
+            color: #FF6347;
+        }
+        .header img {
+            max-width: 100px;
+            display: block;
+            margin: 0 auto 10px;
+        }
+        label {
+            display: block;
+            margin-top: 10px;
+        }
+        input[type="text"], input[type="date"], input[type="tel"], input[type="submit"], select, textarea, input[type="number"], input[type="datetime-local"], input[type="email"], input[type="password"], input[type="radio"], input[type="checkbox"] {
+            display: block;
+            margin-top: 5px;
+            width: calc(100% - 10px);
+            padding: 5px;
+        }
+        input[type="submit"] {
+            margin-top: 20px;
+            background-color: #0000FF;
+            color: white;
+            border: none;
+            padding: 10px;
+            cursor: pointer;
+        }
+        input[type="submit"]:hover {
+            background-color: #000099;
+        }
+        .consent {
+            margin-top: 20px;
+        }
+        .important {
+            font-weight: bold;
+        }
+        #signature-pad {
+            border: 1px solid #000;
+            width: 100%;
+            height: 200px;
+        }
+        #parent-info {
+            display: none;
+        }
+        .highlight {
+            color: red;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <img src="https://i.imgur.com/oYF7W2H.png" alt="PosithINK Tattooshop Logo">
+            <h1>Posith<span class="important">INK</span> Tattooshop</h1>
+        </div>
+        <h2>Einverständniserklärung für Tätowierung</h2>
+        <form id="tattooForm" action="https://formspree.io/f/xldrgeak" method="post">
+            <label for="name">Ich,</label>
+            <input type="text" id="name" name="name" placeholder="(Name des Kunden)" required>
+
+            <label for="birthdate">Geburtsdatum:</label>
+            <input type="date" id="birthdate" name="birthdate" required>
+
+            <label for="is_adult">Sind Sie volljährig?</label>
+            <label><input type="radio" id="is_adult_yes" name="is_adult" value="yes" required> Ja</label>
+            <label><input type="radio" id="is_adult_no" name="is_adult" value="no"> Nein</label>
+
+            <div id="parent-info">
+                <label for="parent_name">Name des Elternteils/Erziehungsberechtigten:</label>
+                <input type="text" id="parent_name" name="parent_name">
+                <label for="parent_phone">Handynummer des Elternteils/Erziehungsberechtigten:</label>
+                <input type="tel" id="parent_phone" name="parent_phone">
+            </div>
+
+            <label for="address_country">Land:</label>
+            <input type="text" id="address_country" name="address_country" required>
+
+            <label for="address_zip">Postleitzahl:</label>
+            <input type="text" id="address_zip" name="address_zip" required>
+
+            <label for="address_city">Stadt:</label>
+            <input type="text" id="address_city" name="address_city" required>
+
+            <label for="address_street">Straße:</label>
+            <input type="text" id="address_street" name="address_street" required>
+
+            <label for="address_number">Hausnummer:</label>
+            <input type="text" id="address_number" name="address_number" required>
+
+            <label for="phone">Handynummer:</label>
+            <input type="tel" id="phone" name="phone" required>
+
+            <label for="artist">Name des Tattoo-Künstlers:</label>
+            <select id="artist" name="artist" required>
+                <option value="Roland">Roland</option>
+            </select>
+
+            <p>stimme hiermit der von <span class="important">[Tattoo-Künstlers]</span> in dem <span class="important">PosithINK Tattooshop</span> durchzuführenden Tätowierung zu.</p>
+            <p>Ich verstehe, dass die Tätowierung das Einsetzen von Tinte in meine Haut mittels einer Nadel beinhaltet. Ich bin mir bewusst, dass es Risiken gibt, die mit diesem Verfahren verbunden sind, einschließlich, aber nicht beschränkt auf <span class="important">Infektionen, allergische Reaktionen, Narbenbildung</span> und das Risiko, dass das Tattoo nicht wie erwartet aussieht.</p>
+            <p>Ich verstehe, dass der Tattoo-Künstler sein Bestes tun wird, um sicherzustellen, dass ich mit dem endgültigen Ergebnis des Tattoos zufrieden bin, aber ich verstehe auch, dass sich das Aussehen des Tattoos im Laufe der Zeit verändern und möglicherweise nicht genauso aussehen kann, wie es zum Zeitpunkt des Stechens aussah. Faktoren, die das Aussehen eines Tattoos beeinflussen können, sind unter anderem die <span class="important">Körperstelle, das Alter und die Gesundheit der Haut</span> und die allgemeine Pflege des Tattoos durch den Einzelnen.</p>
+            <p>Ich habe sorgfältig die Platzierung des Tattoos an meinem Körper in Betracht gezogen und verstehe, dass bestimmte Bereiche anfälliger für das Verblassen, die Verzerrung oder andere Veränderungen im Laufe der Zeit sein können.</p>
+            <p>Ich verstehe auch, dass das Tattoo für andere sichtbar sein kann und möglicherweise Auswirkungen auf meine <span class="important">Beschäftigung oder andere Lebensbereiche</span> haben kann.</p>
+            <p>Ich verstehe, dass der Tattoo-Künstler das Recht hat, die Tätowierung abzulehnen, wenn er oder sie der Meinung ist, dass sie nicht in meinem besten Interesse ist. Dies kann Fälle umfassen, in denen der Tattoo-Künstler Bedenken hinsichtlich meines <span class="important">körperlichen oder mentalen Zustands, der Gestaltung des Tattoos</span> oder anderer Faktoren hat.</p>
+            <p>Ich entlaste und stelle den Tattoo-Künstler und das Tattoo-Studio von jeglicher Haftung, die aus dieser Tätowierung resultieren kann. Ich bestätige, dass ich diese Einverständniserklärung gelesen und vollständig verstanden habe und sie aus freiem Willen unterzeichne.</p>
+            <p><span class="important">Einmal nachstechen ist kostenlos!</span> (für Fingertattoos nicht)</p>
+
+            <label for="body_part">Körperstelle:</label>
+            <input type="text" id="body_part" name="body_part" placeholder="………………………………" required>
+
+            <label for="motif">Motiv:</label>
+            <input type="text" id="motif" name="motif" placeholder="……………………………………………………" required>
+
+            <div class="consent">
+                <label><strong>Bitte markieren Sie, ob Sie eine der folgenden Bedingungen haben oder Medikamente einnehmen:</strong></label>
+                <label><input type="checkbox" id="diabetes" name="conditions" value="Diabetes"> Diabetes</label>
+                <label><input type="checkbox" id="heart_disease" name="conditions" value="Herzerkrankung"> Herzerkrankung</label>
+                <label><input type="checkbox" id="blood_clotting" name="conditions" value="Blutgerinnungsstörung"> Blutgerinnungsstörung</label>
+                <label><input type="checkbox" id="allergies" name="conditions" value="Allergien"> Allergien</label>
+                <label><input type="checkbox" id="immune_disorders" name="conditions" value="Immunschwäche"> Immunschwäche</label>
+                <label><input type="checkbox" id="skin_conditions" name="conditions" value="Hauterkrankungen"> Hauterkrankungen</label>
+                <label><input type="checkbox" id="medication" name="conditions" value="Medikamenteneinnahme"> Regelmäßige Medikamenteneinnahme</label>
+                <label><input type="checkbox" id="pregnancy" name="conditions" value="Schwangerschaft"> Schwangerschaft</label>
+                <label for="other_conditions">Andere (bitte angeben):</label>
+                <textarea id="other_conditions" name="other_conditions" rows="4" placeholder="Bitte geben Sie hier weitere relevante Informationen ein."></textarea>
+            </div>
+
+            <label for="signature">Unterschrift:</label>
+            <div id="signature-pad" class="signature-pad"></div>
+            <textarea id="signature" name="signature" style="display: none;"></textarea>
+
+            <label for="consent_date">Datum:</label>
+            <input type="date" id="consent_date" name="consent_date" required>
+
+            <div class="consent">
+                <label for="consent_confirm"><strong>Ich bestätige, dass ich die Risiken und möglichen Komplikationen der Tätowierung verstanden habe unddamit einverstanden bin:</strong></label>
+                <label><input type="radio" id="consent_confirm_yes" name="consent_confirm" value="yes" required> Ja, ich bin damit einverstanden.</label>
+                <label><input type="radio" id="consent_confirm_no" name="consent_confirm" value="no"> Nein, ich bin damit nicht einverstanden.</label>
+            </div>
+
+            <input type="submit" value="Einreichen">
+        </form>
+    </div>
+
+    <!-- Signature Pad JavaScript library -->
+    <script src="https://cdn.jsdelivr.net/npm/signature_pad@4.0.0/dist/signature_pad.umd.min.js"></script>
+    <script>
+        const signaturePad = new SignaturePad(document.getElementById('signature-pad'));
+
+        document.getElementById('tattooForm').addEventListener('submit', function(e) {
+            if (signaturePad.isEmpty()) {
+                alert('Bitte unterschreiben Sie das Formular.');
+                e.preventDefault();
+            } else {
+                document.getElementById('signature').value = signaturePad.toDataURL();
+            }
+
+            // Highlight conditions if any
+            const conditions = document.querySelectorAll('input[name="conditions"]:checked');
+            if (conditions.length > 0) {
+                conditions.forEach(condition => {
+                    condition.parentElement.classList.add('highlight');
+                });
+            }
+        });
+
+        document.querySelectorAll('input[name="is_adult"]').forEach((elem) => {
+            elem.addEventListener('change', function() {
+                const parentInfo = document.getElementById('parent-info');
+                if (this.value === 'no') {
+                    parentInfo.style.display = 'block';
+                } else {
+                    parentInfo.style.display = 'none';
+                }
+            });
+        });
+    </script>
+</body>
+</html>
