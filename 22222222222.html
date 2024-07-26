@@ -84,6 +84,14 @@
         .highlight {
             color: red;
         }
+        #confirmation {
+            display: none;
+            text-align: center;
+            margin-top: 20px;
+            padding: 20px;
+            border: 1px solid #000;
+            background-color: #f0f0f0;
+        }
     </style>
 </head>
 <body>
@@ -167,6 +175,7 @@
             <canvas id="signature-pad" class="signature-pad" width="600" height="200"></canvas>
             <textarea id="signature" name="signature" style="display: none;"></textarea>
             <button type="button" id="clear-signature" class="btn btn-secondary mt-2">Unterschrift löschen</button>
+            <button type="button" id="confirm-signature" class="btn btn-success mt-2">Unterschrift bestätigen</button>
 
             <label for="consent_date">Datum:</label>
             <input type="date" id="consent_date" name="consent_date" required>
@@ -177,8 +186,12 @@
                 <label><input type="radio" id="consent_confirm_no" name="consent_confirm" value="no"> Nein, ich bin damit nicht einverstanden.</label>
             </div>
 
-            <input type="submit" value="Einreichen">
+            <input type="submit" value="Einreichen" disabled>
         </form>
+    </div>
+    <div id="confirmation">
+        <h2>Vielen Dank für Ihre Einverständniserklärung!</h2>
+        <p>"Have no fear of perfection - you'll never reach it." - Salvador Dalí</p>
     </div>
 
     <!-- Signature Pad JavaScript library -->
@@ -187,6 +200,11 @@
         document.addEventListener('DOMContentLoaded', (event) => {
             const canvas = document.getElementById('signature-pad');
             const signaturePad = new SignaturePad(canvas);
+            const submitButton = document.querySelector('input[type="submit"]');
+            const confirmButton = document.getElementById('confirm-signature');
+            const clearButton = document.getElementById('clear-signature');
+            const form = document.getElementById('tattooForm');
+            const confirmationDiv = document.getElementById('confirmation');
 
             function resizeCanvas() {
                 const ratio = Math.max(window.devicePixelRatio || 1, 1);
@@ -199,12 +217,30 @@
             window.addEventListener("resize", resizeCanvas);
             resizeCanvas();
 
-            document.getElementById('tattooForm').addEventListener('submit', function(e) {
+            clearButton.addEventListener('click', function() {
+                signaturePad.clear();
+                confirmButton.disabled = false;
+                submitButton.disabled = true;
+            });
+
+            confirmButton.addEventListener('click', function() {
+                if (signaturePad.isEmpty()) {
+                    alert('Bitte unterschreiben Sie das Formular.');
+                } else {
+                    confirmButton.disabled = true;
+                    submitButton.disabled = false;
+                }
+            });
+
+            form.addEventListener('submit', function(e) {
                 if (signaturePad.isEmpty()) {
                     alert('Bitte unterschreiben Sie das Formular.');
                     e.preventDefault();
                 } else {
                     document.getElementById('signature').value = signaturePad.toDataURL();
+                    form.style.display = 'none';
+                    confirmationDiv.style.display = 'block';
+                    e.preventDefault();
                 }
 
                 // Highlight conditions if any
@@ -225,10 +261,6 @@
                         parentInfo.style.display = 'none';
                     }
                 });
-            });
-
-            document.getElementById('clear-signature').addEventListener('click', function() {
-                signaturePad.clear();
             });
         });
     </script>
