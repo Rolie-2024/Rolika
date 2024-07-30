@@ -9,7 +9,7 @@
       // Import the functions you need from the SDKs you need
       import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.4/firebase-app.js";
       import { getFirestore, collection, addDoc, getDocs, query, where, orderBy } from "https://www.gstatic.com/firebasejs/10.12.4/firebase-firestore.js";
-      import { getAuth, signInWithEmailAndPassword, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.4/firebase-auth.js";
+      import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.4/firebase-auth.js";
 
       // Your web app's Firebase configuration
       const firebaseConfig = {
@@ -48,6 +48,16 @@
           document.getElementById('main-content').style.display = 'none';
         }
       });
+
+      // Logout function
+      async function logout() {
+        try {
+          await signOut(auth);
+          console.log('User signed out');
+        } catch (error) {
+          console.error('Error signing out: ', error);
+        }
+      }
 
       // Add points to Firestore
       async function savePoints(name, phone, euros, date) {
@@ -177,6 +187,11 @@
           const name = document.getElementById('search-name').value;
           await searchCustomer(name);
         });
+
+        // Kijelentkezés gomb kezelése
+        document.getElementById('logout-button').addEventListener('click', async () => {
+          await logout();
+        });
       });
     </script>
 
@@ -293,6 +308,7 @@
         <button type="submit">Login</button>
     </form>
     <div id="main-content">
+        <button id="logout-button">Logout</button>
         <form id="point-form" autocomplete="on">
             <label for="name">Name:</label>
             <input type="text" id="name" name="name" autocomplete="name" required>
