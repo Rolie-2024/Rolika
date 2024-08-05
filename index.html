@@ -6,12 +6,10 @@
     <title>PosithINK Tattoo Shop Point Collector</title>
     <!-- Import the Firebase SDKs -->
     <script type="module">
-      // Import the functions you need from the SDKs you need
       import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.4/firebase-app.js";
       import { getFirestore, collection, addDoc, getDocs, query, where, orderBy } from "https://www.gstatic.com/firebasejs/10.12.4/firebase-firestore.js";
       import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.4/firebase-auth.js";
 
-      // Your web app's Firebase configuration
       const firebaseConfig = {
         apiKey: "AIzaSyDVahS6mRJVAoMYXuufHzMfu1YZ8GlkV7k",
         authDomain: "point-collector-8f37f.firebaseapp.com",
@@ -22,12 +20,10 @@
         measurementId: "G-3BWW13LHSD"
       };
 
-      // Initialize Firebase
       const app = initializeApp(firebaseConfig);
       const db = getFirestore(app);
       const auth = getAuth(app);
 
-      // Authentication
       async function login(email, password) {
         try {
           await signInWithEmailAndPassword(auth, email, password);
@@ -58,7 +54,6 @@
         }
       });
 
-      // Add points to Firestore
       async function savePoints(name, phone, euros, date) {
         const points = Math.floor(euros / 10);
         try {
@@ -79,7 +74,6 @@
         }
       }
 
-      // Fetch points from Firestore
       async function fetchPoints() {
         try {
           const q = query(collection(db, 'points'), orderBy('timestamp', 'desc'));
@@ -98,7 +92,6 @@
         }
       }
 
-      // Fetch total points for all customers
       async function fetchTotalPoints() {
         try {
           const q = query(collection(db, 'points'));
@@ -120,7 +113,6 @@
         }
       }
 
-      // Update total points display
       function updateTotalPoints(customerPoints) {
         let totalPointsDiv = document.getElementById('total-points');
         totalPointsDiv.innerHTML = '';
@@ -132,18 +124,17 @@
           div.style.margin = '5px';
           div.style.padding = '10px';
           div.style.borderRadius = '5px';
-          div.style.backgroundColor = '#f0f8ff'; /* Light blue background */
+          div.style.backgroundColor = '#f0f8ff';
           totalPointsDiv.appendChild(div);
         }
       }
 
-      // Search for customer points
       async function searchCustomer(name) {
         try {
           const q = query(collection(db, 'points'), where('name', '==', name));
           const querySnapshot = await getDocs(q);
           let searchResults = document.getElementById('search-results');
-          searchResults.innerHTML = '';
+          searchResults.innerHTML = ''; // Clear previous search results
           let totalPoints = 0;
           let totalEuros = 0;
           querySnapshot.forEach((doc) => {
@@ -163,7 +154,6 @@
         }
       }
 
-      // Form submission handler
       document.addEventListener('DOMContentLoaded', () => {
         document.getElementById('point-form').addEventListener('submit', async (e) => {
           e.preventDefault();
@@ -187,7 +177,6 @@
           await searchCustomer(name);
         });
 
-        // Kijelentkezés gomb kezelése
         document.getElementById('logout-button').addEventListener('click', async () => {
           await logout();
         });
