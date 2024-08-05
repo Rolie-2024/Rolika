@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="de">
 <head>
-    <meta charset="UTF-8">
+    <meta charset="UTF-10">
     <title>PosithINK Tattooshop - Tattoo-Einverständniserklärung</title>
     <style>
         body {
@@ -9,6 +9,7 @@
             margin: 0;
             padding: 20px;
             position: relative;
+            font-size: 16px; /* Increased font size for better readability */
         }
         body::before {
             content: "";
@@ -19,7 +20,7 @@
             height: 100%;
             background: url('https://i.imgur.com/UB2e2db.png') no-repeat center center fixed;
             background-size: cover;
-            opacity: 0.15;
+            opacity: 0.65;
             z-index: -1;
         }
         .container {
@@ -37,6 +38,7 @@
         }
         .header h1 {
             color: black;
+            font-size: 40px; /* Increased header font size */
         }
         .header span {
             color: #FF6347;
@@ -54,7 +56,8 @@
             display: block;
             margin-top: 5px;
             width: calc(100% - 10px);
-            padding: 5px;
+            padding: 10px; /* Increased padding for better readability */
+            font-size: 16px; /* Increased input font size */
         }
         input[type="submit"] {
             margin-top: 20px;
@@ -63,6 +66,7 @@
             border: none;
             padding: 10px;
             cursor: pointer;
+            font-size: 16px; /* Increased button font size */
         }
         input[type="submit"]:hover {
             background-color: #000099;
@@ -91,6 +95,18 @@
             padding: 20px;
             border: 1px solid #000;
             background-color: #f0f0f0;
+        }
+        @media (max-width: 600px) {
+            body {
+                font-size: 14px; /* Adjusted font size for smaller screens */
+            }
+            input[type="text"], input[type="date"], input[type="tel"], input[type="submit"], select, textarea, input[type="number"], input[type="datetime-local"], input[type="email"], input[type="password"], input[type="radio"], input[type="checkbox"] {
+                font-size: 14px; /* Adjusted input font size for smaller screens */
+                padding: 8px; /* Adjusted padding for smaller screens */
+            }
+            input[type="submit"] {
+                font-size: 14px; /* Adjusted button font size for smaller screens */
+            }
         }
     </style>
 </head>
@@ -167,6 +183,8 @@
                 <label><input type="checkbox" id="skin_conditions" name="conditions" value="Hauterkrankungen"> Hauterkrankungen</label>
                 <label><input type="checkbox" id="medication" name="conditions" value="Medikamenteneinnahme"> Regelmäßige Medikamenteneinnahme</label>
                 <label><input type="checkbox" id="pregnancy" name="conditions" value="Schwangerschaft"> Schwangerschaft</label>
+                <label><input type="checkbox" id="std" name="conditions" value="Geschlechtskrankheiten"> Geschlechtskrankheiten</label>
+                <label><input type="checkbox" id="hepatitis" name="conditions" value="Hepatitis"> Hepatitis</label>
                 <label for="other_conditions">Andere (bitte angeben):</label>
                 <textarea id="other_conditions" name="other_conditions" rows="4" placeholder="Bitte geben Sie hier weitere relevante Informationen ein."></textarea>
             </div>
@@ -184,6 +202,12 @@
                 <label for="consent_confirm"><strong>Ich bestätige, dass ich die Risiken und möglichen Komplikationen der Tätowierung verstanden habe unddamit einverstanden bin:</strong></label>
                 <label><input type="radio" id="consent_confirm_yes" name="consent_confirm" value="yes" required> Ja, ich bin damit einverstanden.</label>
                 <label><input type="radio" id="consent_confirm_no" name="consent_confirm" value="no"> Nein, ich bin damit nicht einverstanden.</label>
+            </div>
+
+            <div class="consent">
+                <label for="data_consent"><strong>Ich bin damit einverstanden, dass meine Daten für die Zwecke der Tätowierung und der Nachverfolgung gemäß den Datenschutzbestimmungen (DSGVO - Verordnung (EU) 2016/679) gespeichert und verwendet werden:</strong></label>
+                <label><input type="radio" id="data_consent_yes" name="data_consent" value="yes" required> Ja, ich bin damit einverstanden.</label>
+                <label><input type="radio" id="data_consent_no" name="data_consent" value="no"> Nein, ich bin damit nicht einverstanden.</label>
             </div>
 
             <input type="submit" value="Einreichen" disabled>
@@ -283,6 +307,17 @@
                         parentInfo.style.display = 'block';
                     } else {
                         parentInfo.style.display = 'none';
+                    }
+                });
+            });
+
+            document.querySelectorAll('input[name="data_consent"]').forEach((elem) => {
+                elem.addEventListener('change', function() {
+                    if (this.value === 'no') {
+                        alert('Sie müssen der Datenverarbeitung zustimmen, um fortfahren zu können.');
+                        submitButton.disabled = true;
+                    } else {
+                        submitButton.disabled = !signaturePad.isEmpty() ? false : true;
                     }
                 });
             });
