@@ -1,242 +1,34 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PosithINK Tattoo Shop Point Collector</title>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/js/all.min.js"></script>
-    <style>
-        :root {
-            --primary-color: #2c3e50;
-            --secondary-color: #e74c3c;
-            --background-color: #ecf0f1;
-            --text-color: #34495e;
-            --card-background: #fff;
-        }
-
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: var(--background-color);
-            color: var(--text-color);
-            line-height: 1.6;
-            margin: 0;
-            padding: 0;
-        }
-
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 20px;
-        }
-
-        header {
-            background-color: var(--primary-color);
-            color: #fff;
-            text-align: center;
-            padding: 1rem;
-            margin-bottom: 2rem;
-        }
-
-        h1 {
-            margin: 0;
-        }
-
-        h1 span {
-            color: var(--secondary-color);
-        }
-
-        .logo {
-            width: 100px;
-            margin-bottom: 1rem;
-        }
-
-        .card {
-            background-color: var(--card-background);
-            border-radius: 8px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            padding: 2rem;
-            margin-bottom: 2rem;
-        }
-
-        form {
-            display: grid;
-            gap: 1rem;
-        }
-
-        label {
-            font-weight: bold;
-        }
-
-        input, button {
-            width: 100%;
-            padding: 0.5rem;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            font-size: 1rem;
-        }
-
-        button {
-            background-color: var(--primary-color);
-            color: #fff;
-            cursor: pointer;
-            transition: background-color 0.3s ease;
-        }
-
-        button:hover {
-            background-color: #34495e;
-        }
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 1rem;
-        }
-
-        th, td {
-            border: 1px solid #ddd;
-            padding: 0.5rem;
-            text-align: left;
-        }
-
-        th {
-            background-color: var(--primary-color);
-            color: #fff;
-        }
-
-        #total-points {
-            font-weight: bold;
-            margin-top: 1rem;
-        }
-
-        .points-list {
-            list-style-type: none;
-            padding: 0;
-        }
-
-        .points-list li {
-            background-color: var(--card-background);
-            margin-bottom: 0.5rem;
-            padding: 0.5rem;
-            border-radius: 4px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-        }
-
-        #logout-button {
-            background-color: var(--secondary-color);
-        }
-
-        #logout-button:hover {
-            background-color: #c0392b;
-        }
-
-        .hidden {
-            display: none;
-        }
-
-        @media (max-width: 768px) {
-            .container {
-                padding: 10px;
-            }
-            
-            .card {
-                padding: 1rem;
-            }
-        }
-    </style>
+    <!-- ... (meglévő head tartalom) ... -->
 </head>
 <body>
-    <header>
-        <img src="logo.png" alt="PosithINK Tattooshop Logo" class="logo">
-        <h1>Posith<span>INK</span> Tattooshop Point Collector</h1>
-    </header>
-
-    <div class="container">
-        <div id="login-form" class="card">
-            <form>
-                <label for="email">
-                    <i class="fas fa-envelope"></i> Email:
-                </label>
-                <input type="email" id="email" name="email" required>
-                <label for="password">
-                    <i class="fas fa-lock"></i> Password:
-                </label>
-                <input type="password" id="password" name="password" required>
-                <button type="submit">
-                    <i class="fas fa-sign-in-alt"></i> Login
-                </button>
-            </form>
-        </div>
-
-        <div id="main-content" class="hidden">
-            <button id="logout-button">
-                <i class="fas fa-sign-out-alt"></i> Logout
-            </button>
-
-            <div class="card">
-                <h2><i class="fas fa-plus-circle"></i> Add Points</h2>
-                <form id="point-form" autocomplete="on">
-                    <label for="name">
-                        <i class="fas fa-user"></i> Name:
-                    </label>
-                    <input type="text" id="name" name="name" autocomplete="name" required>
-                    <label for="phone">
-                        <i class="fas fa-phone"></i> Phone:
-                    </label>
-                    <input type="tel" id="phone" name="phone" autocomplete="tel" required>
-                    <label for="euros">
-                        <i class="fas fa-euro-sign"></i> Euros:
-                    </label>
-                    <input type="number" id="euros" name="euros" step="0.01" autocomplete="off" required>
-                    <label for="date">
-                        <i class="fas fa-calendar-alt"></i> Date and Time:
-                    </label>
-                    <input type="datetime-local" id="date" name="date" required>
-                    <button type="submit">
-                        <i class="fas fa-save"></i> Submit
-                    </button>
-                </form>
-            </div>
-
-            <div class="card">
-                <h2><i class="fas fa-search"></i> Search Customer</h2>
-                <form id="search-form">
-                    <label for="search-name">Name:</label>
-                    <input type="text" id="search-name" name="search-name" required>
-                    <button type="submit">Search</button>
-                </form>
-                <div id="search-results">
-                    <table>
-                        <thead>
-                            <tr>
-                                <th>Name</th>
-                                <th>Phone</th>
-                                <th>Points</th>
-                                <th>Euros</th>
-                                <th>Date and Time</th>
-                            </tr>
-                        </thead>
-                        <tbody></tbody>
-                    </table>
-                </div>
-            </div>
-
-            <div class="card">
-                <h2><i class="fas fa-chart-bar"></i> Total Points</h2>
-                <div id="total-points"></div>
-            </div>
-
-            <div class="card">
-                <h2><i class="fas fa-list"></i> Collected Points</h2>
-                <ul id="points-list" class="points-list"></ul>
-            </div>
-        </div>
-    </div>
+    <!-- ... (meglévő body tartalom) ... -->
 
     <script type="module">
-        // Firebase configuration and initialization code here
-        // ...
+        // Firebase importok
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.4/firebase-app.js";
+        import { getFirestore, collection, addDoc, getDocs, query, where, orderBy } from "https://www.gstatic.com/firebasejs/10.12.4/firebase-firestore.js";
+        import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.4/firebase-auth.js";
 
-        // Login function
+        // Firebase konfiguráció
+        const firebaseConfig = {
+            apiKey: "AIzaSyDVahS6mRJVAoMYXuufHzMfu1YZ8GlkV7k",
+            authDomain: "point-collector-8f37f.firebaseapp.com",
+            projectId: "point-collector-8f37f",
+            storageBucket: "point-collector-8f37f.appspot.com",
+            messagingSenderId: "381353241547",
+            appId: "1:381353241547:web:9a85b70b419c32811ee44e",
+            measurementId: "G-3BWW13LHSD"
+        };
+
+        // Firebase inicializálása
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+        const auth = getAuth(app);
+
+        // Bejelentkezési funkció
         async function login(email, password) {
             try {
                 await signInWithEmailAndPassword(auth, email, password);
@@ -245,23 +37,139 @@
                 fetchPoints();
                 fetchTotalPoints();
             } catch (error) {
-                alert('Error signing in: ' + error.message);
+                console.error('Bejelentkezési hiba:', error);
+                alert('Bejelentkezési hiba: ' + error.message);
             }
         }
 
-        // Logout function
+        // Kijelentkezési funkció
         async function logout() {
             try {
                 await signOut(auth);
                 document.getElementById('login-form').classList.remove('hidden');
                 document.getElementById('main-content').classList.add('hidden');
             } catch (error) {
-                alert('Error signing out: ' + error.message);
+                console.error('Kijelentkezési hiba:', error);
+                alert('Kijelentkezési hiba: ' + error.message);
             }
         }
 
-        // Rest of the JavaScript functions (savePoints, fetchPoints, fetchTotalPoints, searchCustomer) here
-        // ...
+        // Autentikációs állapot figyelése
+        onAuthStateChanged(auth, (user) => {
+            if (user) {
+                document.getElementById('login-form').classList.add('hidden');
+                document.getElementById('main-content').classList.remove('hidden');
+                fetchPoints();
+                fetchTotalPoints();
+            } else {
+                document.getElementById('login-form').classList.remove('hidden');
+                document.getElementById('main-content').classList.add('hidden');
+            }
+        });
+
+        // Pontok mentése funkció
+        async function savePoints(name, phone, euros, date) {
+            const points = Math.floor(euros / 10);
+            try {
+                await addDoc(collection(db, 'points'), {
+                    name: name,
+                    phone: phone,
+                    points: points,
+                    euros: euros,
+                    date: date,
+                    timestamp: new Date()
+                });
+                console.log('Pontok sikeresen elmentve');
+                document.getElementById('point-form').reset();
+                fetchPoints();
+                fetchTotalPoints();
+            } catch (error) {
+                console.error('Hiba a pontok mentése közben:', error);
+                alert('Hiba a pontok mentése közben: ' + error.message);
+            }
+        }
+
+        // Pontok lekérdezése funkció
+        async function fetchPoints() {
+            try {
+                const q = query(collection(db, 'points'), orderBy('timestamp', 'desc'));
+                const querySnapshot = await getDocs(q);
+                let pointsList = document.getElementById('points-list');
+                pointsList.innerHTML = '';
+                querySnapshot.forEach((doc) => {
+                    const data = doc.data();
+                    const euros = data.euros !== undefined ? data.euros.toFixed(2) : '0.00';
+                    let li = document.createElement('li');
+                    li.innerHTML = `<strong>${data.name}</strong> - Pontok: ${data.points} (Euro: ${euros})`;
+                    pointsList.appendChild(li);
+                });
+            } catch (error) {
+                console.error('Hiba a pontok lekérdezése közben:', error);
+                alert('Hiba a pontok lekérdezése közben: ' + error.message);
+            }
+        }
+
+        // Összes pont lekérdezése funkció
+        async function fetchTotalPoints() {
+            try {
+                const q = query(collection(db, 'points'));
+                const querySnapshot = await getDocs(q);
+                let customerPoints = {};
+                querySnapshot.forEach((doc) => {
+                    const data = doc.data();
+                    const euros = data.euros !== undefined ? data.euros : 0;
+                    if (customerPoints[data.name]) {
+                        customerPoints[data.name].points += data.points;
+                        customerPoints[data.name].euros += euros;
+                    } else {
+                        customerPoints[data.name] = { points: data.points, euros: euros };
+                    }
+                });
+                updateTotalPoints(customerPoints);
+            } catch (error) {
+                console.error('Hiba az összes pont lekérdezése közben:', error);
+                alert('Hiba az összes pont lekérdezése közben: ' + error.message);
+            }
+        }
+
+        // Összes pont frissítése funkció
+        function updateTotalPoints(customerPoints) {
+            let totalPointsDiv = document.getElementById('total-points');
+            totalPointsDiv.innerHTML = '';
+            for (const [name, data] of Object.entries(customerPoints)) {
+                const euros = data.euros !== undefined ? data.euros.toFixed(2) : '0.00';
+                let div = document.createElement('div');
+                div.innerHTML = `<strong>${name}</strong>: ${data.points} pont (${euros} EUR)`;
+                totalPointsDiv.appendChild(div);
+            }
+        }
+
+        // Ügyfél keresése funkció
+        async function searchCustomer(name) {
+            try {
+                const q = query(collection(db, 'points'), where('name', '==', name));
+                const querySnapshot = await getDocs(q);
+                let searchResults = document.querySelector('#search-results tbody');
+                searchResults.innerHTML = '';
+                let totalPoints = 0;
+                let totalEuros = 0;
+                querySnapshot.forEach((doc) => {
+                    const data = doc.data();
+                    const euros = data.euros !== undefined ? data.euros.toFixed(2) : '0.00';
+                    let row = document.createElement('tr');
+                    row.innerHTML = `<td>${data.name}</td><td>${data.phone}</td><td>${data.points}</td><td>${euros}</td><td>${data.date}</td>`;
+                    searchResults.appendChild(row);
+                    totalPoints += data.points;
+                    totalEuros += data.euros;
+                });
+                let summaryRow = document.createElement('tr');
+                summaryRow.innerHTML = `<td colspan="2"><strong>Összesen</strong></td><td><strong>${totalPoints} pont</strong></td><td><strong>${totalEuros.toFixed(2)} EUR</strong></td><td></td>`;
+                searchResults.appendChild(summaryRow);
+            } catch (error) {
+                console.error('Hiba az ügyfél keresése közben:', error);
+                alert('Hiba az ügyfél keresése közben: ' + error.message);
+            }
+        }
 
         // Event listeners
         document.addEventListener('DOMContentLoaded', () => {
