@@ -45,55 +45,85 @@
             alert(message + ': ' + error.message);
         }
 
-        // Firebase importok
+        // Elem keresése biztonsággal
+        function safeGetElement(id) {
+            const element = document.getElementById(id);
+            if (!element) {
+                console.warn(`Element with id '${id}' not found`);
+            }
+            return element;
+        }
+
+        // Firebase importok és inicializálás
         let app, db, auth;
-        try {
-            const { initializeApp } = await import("https://www.gstatic.com/firebasejs/10.12.4/firebase-app.js");
-            const { getFirestore, collection, addDoc, getDocs, query, where, orderBy } = await import("https://www.gstatic.com/firebasejs/10.12.4/firebase-firestore.js");
-            const { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut } = await import("https://www.gstatic.com/firebasejs/10.12.4/firebase-auth.js");
 
-            // Firebase konfiguráció
-            const firebaseConfig = {
-                apiKey: "AIzaSyDVahS6mRJVAoMYXuufHzMfu1YZ8GlkV7k",
-                authDomain: "point-collector-8f37f.firebaseapp.com",
-                projectId: "point-collector-8f37f",
-                storageBucket: "point-collector-8f37f.appspot.com",
-                messagingSenderId: "381353241547",
-                appId: "1:381353241547:web:9a85b70b419c32811ee44e",
-                measurementId: "G-3BWW13LHSD"
-            };
+        async function initializeFirebase() {
+            try {
+                const { initializeApp } = await import("https://www.gstatic.com/firebasejs/10.12.4/firebase-app.js");
+                const { getFirestore } = await import("https://www.gstatic.com/firebasejs/10.12.4/firebase-firestore.js");
+                const { getAuth, signInWithEmailAndPassword } = await import("https://www.gstatic.com/firebasejs/10.12.4/firebase-auth.js");
 
-            // Firebase inicializálása
-            app = initializeApp(firebaseConfig);
-            db = getFirestore(app);
-            auth = getAuth(app);
+                const firebaseConfig = {
+                    apiKey: "AIzaSyDVahS6mRJVAoMYXuufHzMfu1YZ8GlkV7k",
+                    authDomain: "point-collector-8f37f.firebaseapp.com",
+                    projectId: "point-collector-8f37f",
+                    storageBucket: "point-collector-8f37f.appspot.com",
+                    messagingSenderId: "381353241547",
+                    appId: "1:381353241547:web:9a85b70b419c32811ee44e",
+                    measurementId: "G-3BWW13LHSD"
+                };
 
-            console.log("Firebase sikeresen inicializálva");
-        } catch (error) {
-            logError('Hiba történt a Firebase inicializálása során', error);
+                app = initializeApp(firebaseConfig);
+                db = getFirestore(app);
+                auth = getAuth(app);
+
+                console.log("Firebase sikeresen inicializálva");
+            } catch (error) {
+                logError('Hiba történt a Firebase inicializálása során', error);
+            }
         }
 
         // Bejelentkezési funkció
         async function login(email, password) {
             try {
                 await signInWithEmailAndPassword(auth, email, password);
-                document.getElementById('login-form').classList.add('hidden');
-                document.getElementById('main-content').classList.remove('hidden');
+                const loginForm = safeGetElement('login-form');
+                const mainContent = safeGetElement('main-content');
+                if (loginForm) loginForm.classList.add('hidden');
+                if (mainContent) mainContent.classList.remove('hidden');
                 console.log("Sikeres bejelentkezés");
             } catch (error) {
                 logError('Bejelentkezési hiba', error);
             }
         }
 
-        // Event listener a bejelentkezési űrlaphoz
-        document.getElementById('login-form').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const email = document.getElementById('email').value;
-            const password = document.getElementById('password').value;
-            await login(email, password);
-        });
+        // Fő inicializáló függvény
+        async function initialize() {
+            await initializeFirebase();
 
-        console.log("Script betöltése befejeződött");
+            const loginForm = safeGetElement('login-form');
+            if (loginForm) {
+                loginForm.addEventListener('submit', async (e) => {
+                    e.preventDefault();
+                    const email = safeGetElement('email')?.value;
+                    const password = safeGetElement('password')?.value;
+                    if (email && password) {
+                        await login(email, password);
+                    } else {
+                        console.warn('Email or password is missing');
+                    }
+                });
+            }
+
+            console.log("Script inicializálása befejeződött");
+        }
+
+        // Várjuk meg, amíg a DOM teljesen betöltődik
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', initialize);
+        } else {
+            initialize();
+        }
     </script>
 </body>
 </html>
