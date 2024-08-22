@@ -4,7 +4,54 @@
     <!-- ... (meglévő head tartalom) ... -->
 </head>
 <body>
-    <!-- ... (meglévő body tartalom) ... -->
+    <div class="container">
+        <img src="logo.png" alt="PosithINK Tattooshop Logo" class="logo">
+        <h1>Posith<span>INK</span> Tattooshop Point Collector</h1>
+        
+        <div class="card fade-in">
+            <h2><i class="fas fa-plus-circle"></i> Add Points</h2>
+            <form id="point-form" autocomplete="on">
+                <label for="name">
+                    <i class="fas fa-user"></i>
+                    <input type="text" id="name" name="name" placeholder="Name" autocomplete="name" required>
+                </label>
+                <label for="phone">
+                    <i class="fas fa-phone"></i>
+                    <input type="tel" id="phone" name="phone" placeholder="Phone" autocomplete="tel" required>
+                </label>
+                <label for="euros">
+                    <i class="fas fa-euro-sign"></i>
+                    <input type="number" id="euros" name="euros" placeholder="Euros" step="0.01" autocomplete="off" required>
+                </label>
+                <label for="date">
+                    <i class="fas fa-calendar-alt"></i>
+                    <input type="datetime-local" id="date" name="date" required>
+                </label>
+                <button type="submit"><i class="fas fa-save"></i> Submit</button>
+            </form>
+        </div>
+        
+        <div class="card fade-in">
+            <h2><i class="fas fa-search"></i> Search Customer</h2>
+            <form id="search-form">
+                <label for="search-name">
+                    <i class="fas fa-user-search"></i>
+                    <input type="text" id="search-name" name="search-name" placeholder="Customer Name" required>
+                </label>
+                <button type="submit"><i class="fas fa-search"></i> Search</button>
+            </form>
+            <div id="search-results"></div>
+        </div>
+        
+        <div id="total-points" class="card fade-in">
+            <h2><i class="fas fa-chart-bar"></i> Total Points</h2>
+        </div>
+        
+        <div class="card fade-in">
+            <h2><i class="fas fa-list"></i> Collected Points</h2>
+            <ul id="points-list"></ul>
+        </div>
+    </div>
 
     <script type="module">
       import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.4/firebase-app.js";
@@ -23,136 +70,55 @@
       const app = initializeApp(firebaseConfig);
       const db = getFirestore(app);
 
-      async function savePoints(name, phone, euros, date) {
-        const points = Math.floor(euros / 10);
-        try {
-          await addDoc(collection(db, 'points'), {
-            name: name,
-            phone: phone,
-            points: points,
-            euros: euros,
-            date: date,
-            timestamp: new Date()
+      // ... (többi függvény változatlan marad) ...
+
+      function initializeEventListeners() {
+        const pointForm = document.getElementById('point-form');
+        const searchForm = document.getElementById('search-form');
+
+        if (pointForm) {
+          pointForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const name = document.getElementById('name').value;
+            const phone = document.getElementById('phone').value;
+            const euros = parseFloat(document.getElementById('euros').value);
+            const date = document.getElementById('date').value;
+            await savePoints(name, phone, euros, date);
           });
-          console.log('Points saved successfully');
-          document.getElementById('point-form').reset();
+        } else {
+          console.error('Point form not found');
+        }
+
+        if (searchForm) {
+          searchForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const name = document.getElementById('search-name').value;
+            await searchCustomer(name);
+          });
+        } else {
+          console.error('Search form not found');
+        }
+      }
+
+      // Várjuk meg, amíg a DOM teljesen betöltődik
+      if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', () => {
+          initializeEventListeners();
           fetchPoints();
           fetchTotalPoints();
-        } catch (error) {
-          console.error('Error saving points: ', error);
-        }
-      }
-
-      async function fetchPoints() {
-        try {
-          const q = query(collection(db, 'points'), orderBy('timestamp', 'desc'));
-          const querySnapshot = await getDocs(q);
-          let pointsList = document.getElementById('points-list');
-          pointsList.innerHTML = '';
-          querySnapshot.forEach((doc) => {
-            const data = doc.data();
-            const euros = data.euros !== undefined ? data.euros.toFixed(2) : '0.00';
-            const date = data.date ? new Date(data.date).toLocaleString() : 'N/A';
-            let li = document.createElement('li');
-            li.innerHTML = `<strong>${data.name}</strong> - Points: ${data.points} (Euros: ${euros}) - Date: ${date}`;
-            pointsList.appendChild(li);
-          });
-        } catch (error) {
-          console.error('Error fetching points: ', error);
-        }
-      }
-
-      async function fetchTotalPoints() {
-        try {
-          const q = query(collection(db, 'points'));
-          const querySnapshot = await getDocs(q);
-          let customerPoints = {};
-          querySnapshot.forEach((doc) => {
-            const data = doc.data();
-            const euros = data.euros !== undefined ? data.euros : 0;
-            if (customerPoints[data.name]) {
-              customerPoints[data.name].points += data.points;
-              customerPoints[data.name].euros += euros;
-            } else {
-              customerPoints[data.name] = { points: data.points, euros: euros };
-            }
-          });
-          updateTotalPoints(customerPoints);
-        } catch (error) {
-          console.error('Error fetching total points: ', error);
-        }
-      }
-
-      function updateTotalPoints(customerPoints) {
-        let totalPointsDiv = document.getElementById('total-points');
-        totalPointsDiv.innerHTML = '<h2><i class="fas fa-chart-bar"></i> Total Points</h2>';
-        for (const [name, data] of Object.entries(customerPoints)) {
-          const euros = data.euros !== undefined ? data.euros.toFixed(2) : '0.00';
-          let div = document.createElement('div');
-          div.innerHTML = `<strong>${name}</strong>: ${data.points} points (${euros} EUR)`;
-          div.style.margin = '5px';
-          div.style.padding = '10px';
-          div.style.backgroundColor = '#f0f8ff';
-          totalPointsDiv.appendChild(div);
-        }
-      }
-
-      async function searchCustomer(name) {
-        try {
-          const q = query(collection(db, 'points'), where('name', '==', name));
-          const querySnapshot = await getDocs(q);
-          let searchResults = document.getElementById('search-results');
-          searchResults.innerHTML = '<table><thead><tr><th>Name</th><th>Phone</th><th>Points</th><th>Euros</th><th>Date</th></tr></thead><tbody></tbody></table>';
-          let tbody = searchResults.querySelector('tbody');
-          let totalPoints = 0;
-          let totalEuros = 0;
-          querySnapshot.forEach((doc) => {
-            const data = doc.data();
-            const euros = data.euros !== undefined ? data.euros.toFixed(2) : '0.00';
-            const date = data.date ? new Date(data.date).toLocaleString() : 'N/A';
-            let row = document.createElement('tr');
-            row.innerHTML = `<td>${data.name}</td><td>${data.phone}</td><td>${data.points}</td><td>${euros}</td><td>${date}</td>`;
-            tbody.appendChild(row);
-            totalPoints += data.points;
-            totalEuros += data.euros;
-          });
-          let summaryRow = document.createElement('tr');
-          summaryRow.innerHTML = `<td colspan="2"><strong>Total</strong></td><td><strong>${totalPoints} points</strong></td><td><strong>${totalEuros.toFixed(2)} EUR</strong></td><td></td>`;
-          tbody.appendChild(summaryRow);
-        } catch (error) {
-          console.error('Error searching customer: ', error);
-        }
-      }
-
-      document.addEventListener('DOMContentLoaded', () => {
-        document.getElementById('point-form').addEventListener('submit', async (e) => {
-          e.preventDefault();
-          const name = document.getElementById('name').value;
-          const phone = document.getElementById('phone').value;
-          const euros = parseFloat(document.getElementById('euros').value);
-          const date = document.getElementById('date').value;
-          await savePoints(name, phone, euros, date);
+          document.querySelectorAll('.card').forEach(card => fadeIn(card));
         });
-
-        document.getElementById('search-form').addEventListener('submit', async (e) => {
-          e.preventDefault();
-          const name = document.getElementById('search-name').value;
-          await searchCustomer(name);
-        });
-
+      } else {
+        initializeEventListeners();
         fetchPoints();
         fetchTotalPoints();
-      });
+        document.querySelectorAll('.card').forEach(card => fadeIn(card));
+      }
 
       // Új funkció a fade-in animációhoz
       function fadeIn(element) {
         element.classList.add('fade-in');
       }
-
-      // Azonnal meghívjuk a fadeIn funkciót az összes kártyára
-      document.addEventListener('DOMContentLoaded', () => {
-        document.querySelectorAll('.card').forEach(card => fadeIn(card));
-      });
     </script>
 </body>
 </html>
