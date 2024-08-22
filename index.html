@@ -1,7 +1,14 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <!-- ... (meglévő head tartalom) ... -->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PosithINK Tattoo Shop Point Collector</title>
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://www.gstatic.com https://cdnjs.cloudflare.com 'unsafe-eval'; style-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com; font-src 'self' https://cdnjs.cloudflare.com; connect-src 'self' https://*.firebaseio.com https://firestore.googleapis.com;">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/js/all.min.js"></script>
+    <style>
+        /* ... (meglévő CSS kód) ... */
+    </style>
 </head>
 <body>
     <div class="container">
@@ -70,7 +77,106 @@
       const app = initializeApp(firebaseConfig);
       const db = getFirestore(app);
 
-      // ... (többi függvény változatlan marad) ...
+      async function savePoints(name, phone, euros, date) {
+        const points = Math.floor(euros / 10);
+        try {
+          await addDoc(collection(db, 'points'), {
+            name: name,
+            phone: phone,
+            points: points,
+            euros: parseFloat(euros),
+            date: date,
+            timestamp: new Date()
+          });
+          console.log('Points saved successfully');
+          document.getElementById('point-form').reset();
+          fetchPoints();
+          fetchTotalPoints();
+        } catch (error) {
+          console.error('Error saving points: ', error);
+        }
+      }
+
+      async function fetchPoints() {
+        try {
+          const q = query(collection(db, 'points'), orderBy('timestamp', 'desc'));
+          const querySnapshot = await getDocs(q);
+          let pointsList = document.getElementById('points-list');
+          pointsList.innerHTML = '';
+          querySnapshot.forEach((doc) => {
+            const data = doc.data();
+            const euros = data.euros !== undefined ? data.euros.toFixed(2) : '0.00';
+            const date = data.date ? new Date(data.date).toLocaleString() : 'N/A';
+            let li = document.createElement('li');
+            li.innerHTML = `<strong>${data.name}</strong> - Points: ${data.points} (Euros: ${euros}) - Date: ${date}`;
+            pointsList.appendChild(li);
+          });
+        } catch (error) {
+          console.error('Error fetching points: ', error);
+        }
+      }
+
+      async function fetchTotalPoints() {
+        try {
+          const q = query(collection(db, 'points'));
+          const querySnapshot = await getDocs(q);
+          let customerPoints = {};
+          querySnapshot.forEach((doc) => {
+            const data = doc.data();
+            const euros = data.euros !== undefined ? parseFloat(data.euros) : 0;
+            if (customerPoints[data.name]) {
+              customerPoints[data.name].points += data.points;
+              customerPoints[data.name].euros += euros;
+            } else {
+              customerPoints[data.name] = { points: data.points, euros: euros };
+            }
+          });
+          updateTotalPoints(customerPoints);
+        } catch (error) {
+          console.error('Error fetching total points: ', error);
+        }
+      }
+
+      function updateTotalPoints(customerPoints) {
+        let totalPointsDiv = document.getElementById('total-points');
+        totalPointsDiv.innerHTML = '<h2><i class="fas fa-chart-bar"></i> Total Points</h2>';
+        for (const [name, data] of Object.entries(customerPoints)) {
+          const euros = data.euros.toFixed(2);
+          let div = document.createElement('div');
+          div.innerHTML = `<strong>${name}</strong>: ${data.points} points (${euros} EUR)`;
+          div.style.margin = '5px';
+          div.style.padding = '10px';
+          div.style.backgroundColor = '#f0f8ff';
+          totalPointsDiv.appendChild(div);
+        }
+      }
+
+      async function searchCustomer(name) {
+        try {
+          const q = query(collection(db, 'points'), where('name', '==', name));
+          const querySnapshot = await getDocs(q);
+          let searchResults = document.getElementById('search-results');
+          searchResults.innerHTML = '<table><thead><tr><th>Name</th><th>Phone</th><th>Points</th><th>Euros</th><th>Date</th></tr></thead><tbody></tbody></table>';
+          let tbody = searchResults.querySelector('tbody');
+          let totalPoints = 0;
+          let totalEuros = 0;
+          querySnapshot.forEach((doc) => {
+            const data = doc.data();
+            const euros = data.euros !== undefined ? parseFloat(data.euros).toFixed(2) : '0.00';
+            const date = data.date ? new Date(data.date).toLocaleString() : 'N/A';
+            let row = document.createElement('tr');
+            row.innerHTML = `<td>${data.name}</td><td>${data.phone}</td><td>${data.points}</td><td>${euros}</td><td>${date}</td>`;
+            tbody.appendChild(row);
+            totalPoints += data.points;
+            totalEuros += parseFloat(data.euros);
+          });
+          let summaryRow = document.createElement('tr');
+          summaryRow.innerHTML = `<td colspan="2"><strong>Total</strong></td><td><strong>${totalPoints} points</strong></td><td><strong>${totalEuros.toFixed(2)} EUR</strong></td><td></td>`;
+          tbody.appendChild(summaryRow);
+        } catch (error) {
+          console.error('Error searching customer: ', error);
+        }
+      }
 
       function initializeEventListeners() {
         const pointForm = document.getElementById('point-form');
