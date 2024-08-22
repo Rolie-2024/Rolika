@@ -1,245 +1,10 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PosithINK Tattoo Shop Point Collector</title>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/js/all.min.js"></script>
-    <style>
-        :root {
-            --primary-color: #00008b;
-            --secondary-color: #ff0000;
-            --background-color: #f0f8ff;
-            --text-color: #333;
-            --card-background: rgba(255, 255, 255, 0.85);
-        }
-
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: url('2.png') no-repeat center center fixed;
-            background-size: cover;
-            color: var(--text-color);
-            text-align: center;
-            padding: 20px;
-            margin: 0;
-            position: relative;
-        }
-
-        body::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(255, 255, 255, 0.35);
-            z-index: -1;
-        }
-
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-        }
-
-        h1 {
-            color: #000;
-            font-weight: bold;
-        }
-
-        h1 span {
-            color: var(--secondary-color);
-        }
-
-        .card {
-            background: var(--card-background);
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            margin-bottom: 20px;
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-        }
-
-        .card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
-        }
-
-        form {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-
-        label {
-            display: flex;
-            align-items: center;
-            margin-bottom: 10px;
-            width: 100%;
-            max-width: 300px;
-        }
-
-        label i {
-            margin-right: 10px;
-            color: var(--primary-color);
-        }
-
-        input {
-            padding: 10px;
-            width: 100%;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-            font-size: 16px;
-        }
-
-        button {
-            background-color: var(--primary-color);
-            color: #fff;
-            padding: 10px 20px;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            transition: background-color 0.3s ease;
-            font-size: 16px;
-            margin-top: 10px;
-        }
-
-        button:hover {
-            background-color: #0000cd;
-        }
-
-        ul {
-            list-style-type: none;
-            padding: 0;
-        }
-
-        li {
-            background: var(--card-background);
-            margin: 10px 0;
-            padding: 15px;
-            border-radius: 5px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-            transition: transform 0.2s ease;
-        }
-
-        li:hover {
-            transform: scale(1.02);
-        }
-
-        #total-points {
-            font-weight: bold;
-            margin-top: 20px;
-            padding: 15px;
-            text-align: left;
-            background: var(--background-color);
-            border-radius: 10px;
-        }
-
-        table {
-            width: 100%;
-            border-collapse: separate;
-            border-spacing: 0 10px;
-            margin-top: 20px;
-        }
-
-        th, td {
-            padding: 15px;
-            text-align: left;
-            background-color: var(--card-background);
-        }
-
-        th {
-            background-color: var(--primary-color);
-            color: #fff;
-        }
-
-        tr {
-            transition: transform 0.2s ease;
-        }
-
-        tr:hover {
-            transform: scale(1.02);
-        }
-
-        .logo {
-            width: 150px;
-            margin: 20px auto;
-            display: block;
-            transition: transform 0.3s ease;
-        }
-
-        .logo:hover {
-            transform: scale(1.1);
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
-        }
-
-        .fade-in {
-            animation: fadeIn 0.5s ease-in;
-        }
-
-        @media (max-width: 768px) {
-            .card {
-                padding: 15px;
-            }
-
-            input, button {
-                font-size: 14px;
-            }
-        }
-    </style>
+    <!-- ... (meglévő head tartalom) ... -->
 </head>
 <body>
-    <div class="container">
-        <img src="logo.png" alt="PosithINK Tattooshop Logo" class="logo">
-        <h1>Posith<span>INK</span> Tattooshop Point Collector</h1>
-        
-        <div class="card fade-in">
-            <h2><i class="fas fa-plus-circle"></i> Add Points</h2>
-            <form id="point-form" autocomplete="on">
-                <label for="name">
-                    <i class="fas fa-user"></i>
-                    <input type="text" id="name" name="name" placeholder="Name" autocomplete="name" required>
-                </label>
-                <label for="phone">
-                    <i class="fas fa-phone"></i>
-                    <input type="tel" id="phone" name="phone" placeholder="Phone" autocomplete="tel" required>
-                </label>
-                <label for="euros">
-                    <i class="fas fa-euro-sign"></i>
-                    <input type="number" id="euros" name="euros" placeholder="Euros" step="0.01" autocomplete="off" required>
-                </label>
-                <label for="date">
-                    <i class="fas fa-calendar-alt"></i>
-                    <input type="datetime-local" id="date" name="date" required>
-                </label>
-                <button type="submit"><i class="fas fa-save"></i> Submit</button>
-            </form>
-        </div>
-        
-        <div class="card fade-in">
-            <h2><i class="fas fa-search"></i> Search Customer</h2>
-            <form id="search-form">
-                <label for="search-name">
-                    <i class="fas fa-user-search"></i>
-                    <input type="text" id="search-name" name="search-name" placeholder="Customer Name" required>
-                </label>
-                <button type="submit"><i class="fas fa-search"></i> Search</button>
-            </form>
-            <div id="search-results"></div>
-        </div>
-        
-        <div id="total-points" class="card fade-in">
-            <h2><i class="fas fa-chart-bar"></i> Total Points</h2>
-        </div>
-        
-        <div class="card fade-in">
-            <h2><i class="fas fa-list"></i> Collected Points</h2>
-            <ul id="points-list"></ul>
-        </div>
-    </div>
+    <!-- ... (meglévő body tartalom) ... -->
 
     <script type="module">
       import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.4/firebase-app.js";
@@ -287,8 +52,9 @@
           querySnapshot.forEach((doc) => {
             const data = doc.data();
             const euros = data.euros !== undefined ? data.euros.toFixed(2) : '0.00';
+            const date = data.date ? new Date(data.date).toLocaleString() : 'N/A';
             let li = document.createElement('li');
-            li.innerHTML = `<strong>${data.name}</strong> - Points: ${data.points} (Euros: ${euros})`;
+            li.innerHTML = `<strong>${data.name}</strong> - Points: ${data.points} (Euros: ${euros}) - Date: ${date}`;
             pointsList.appendChild(li);
           });
         } catch (error) {
@@ -343,8 +109,9 @@
           querySnapshot.forEach((doc) => {
             const data = doc.data();
             const euros = data.euros !== undefined ? data.euros.toFixed(2) : '0.00';
+            const date = data.date ? new Date(data.date).toLocaleString() : 'N/A';
             let row = document.createElement('tr');
-            row.innerHTML = `<td>${data.name}</td><td>${data.phone}</td><td>${data.points}</td><td>${euros}</td><td>${data.date}</td>`;
+            row.innerHTML = `<td>${data.name}</td><td>${data.phone}</td><td>${data.points}</td><td>${euros}</td><td>${date}</td>`;
             tbody.appendChild(row);
             totalPoints += data.points;
             totalEuros += data.euros;
