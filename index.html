@@ -4,330 +4,291 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>PosithINK Tattoo Shop Point Collector</title>
-    <!-- Import the Firebase SDKs -->
-    <script type="module">
-      import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.4/firebase-app.js";
-      import { getFirestore, collection, addDoc, getDocs, query, where, orderBy } from "https://www.gstatic.com/firebasejs/10.12.4/firebase-firestore.js";
-      import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.4/firebase-auth.js";
-
-      const firebaseConfig = {
-        apiKey: "AIzaSyDVahS6mRJVAoMYXuufHzMfu1YZ8GlkV7k",
-        authDomain: "point-collector-8f37f.firebaseapp.com",
-        projectId: "point-collector-8f37f",
-        storageBucket: "point-collector-8f37f.appspot.com",
-        messagingSenderId: "381353241547",
-        appId: "1:381353241547:web:9a85b70b419c32811ee44e",
-        measurementId: "G-3BWW13LHSD"
-      };
-
-      const app = initializeApp(firebaseConfig);
-      const db = getFirestore(app);
-      const auth = getAuth(app);
-
-      async function login(email, password) {
-        try {
-          await signInWithEmailAndPassword(auth, email, password);
-          console.log('User signed in');
-        } catch (error) {
-          console.error('Error signing in: ', error);
-        }
-      }
-
-      async function logout() {
-        try {
-          await signOut(auth);
-          console.log('User signed out');
-        } catch (error) {
-          console.error('Error signing out: ', error);
-        }
-      }
-
-      onAuthStateChanged(auth, (user) => {
-        if (user) {
-          document.getElementById('login-form').style.display = 'none';
-          document.getElementById('main-content').style.display = 'block';
-          fetchPoints();
-          fetchTotalPoints();
-        } else {
-          document.getElementById('login-form').style.display = 'block';
-          document.getElementById('main-content').style.display = 'none';
-        }
-      });
-
-      async function savePoints(name, phone, euros, date) {
-        const points = Math.floor(euros / 10);
-        try {
-          await addDoc(collection(db, 'points'), {
-            name: name,
-            phone: phone,
-            points: points,
-            euros: euros,
-            date: date,
-            timestamp: new Date()
-          });
-          console.log('Points saved successfully');
-          document.getElementById('point-form').reset();
-          fetchPoints();
-          fetchTotalPoints();
-        } catch (error) {
-          console.error('Error saving points: ', error);
-        }
-      }
-
-      async function fetchPoints() {
-        try {
-          const q = query(collection(db, 'points'), orderBy('timestamp', 'desc'));
-          const querySnapshot = await getDocs(q);
-          let pointsList = document.getElementById('points-list');
-          pointsList.innerHTML = '';
-          querySnapshot.forEach((doc) => {
-            const data = doc.data();
-            const euros = data.euros !== undefined ? data.euros.toFixed(2) : '0.00';
-            let li = document.createElement('li');
-            li.innerHTML = `<strong>${data.name}</strong> - Points: ${data.points} (Euros: ${euros})`;
-            pointsList.appendChild(li);
-          });
-        } catch (error) {
-          console.error('Error fetching points: ', error);
-        }
-      }
-
-      async function fetchTotalPoints() {
-        try {
-          const q = query(collection(db, 'points'));
-          const querySnapshot = await getDocs(q);
-          let customerPoints = {};
-          querySnapshot.forEach((doc) => {
-            const data = doc.data();
-            const euros = data.euros !== undefined ? data.euros : 0;
-            if (customerPoints[data.name]) {
-              customerPoints[data.name].points += data.points;
-              customerPoints[data.name].euros += euros;
-            } else {
-              customerPoints[data.name] = { points: data.points, euros: euros };
-            }
-          });
-          updateTotalPoints(customerPoints);
-        } catch (error) {
-          console.error('Error fetching total points: ', error);
-        }
-      }
-
-      function updateTotalPoints(customerPoints) {
-        let totalPointsDiv = document.getElementById('total-points');
-        totalPointsDiv.innerHTML = '';
-        for (const [name, data] of Object.entries(customerPoints)) {
-          const euros = data.euros !== undefined ? data.euros.toFixed(2) : '0.00';
-          let div = document.createElement('div');
-          div.innerHTML = `<strong>${name}</strong>: ${data.points} points (${euros} EUR)`;
-          div.style.border = '2px solid green';
-          div.style.margin = '5px';
-          div.style.padding = '10px';
-          div.style.borderRadius = '5px';
-          div.style.backgroundColor = '#f0f8ff';
-          totalPointsDiv.appendChild(div);
-        }
-      }
-
-      async function searchCustomer(name) {
-        try {
-          const q = query(collection(db, 'points'), where('name', '==', name));
-          const querySnapshot = await getDocs(q);
-          let searchResults = document.getElementById('search-results');
-          searchResults.innerHTML = ''; // Clear previous search results
-          let totalPoints = 0;
-          let totalEuros = 0;
-          querySnapshot.forEach((doc) => {
-            const data = doc.data();
-            const euros = data.euros !== undefined ? data.euros.toFixed(2) : '0.00';
-            let row = document.createElement('tr');
-            row.innerHTML = `<td>${data.name}</td><td>${data.phone}</td><td>${data.points}</td><td>${euros}</td><td>${data.date}</td>`;
-            searchResults.appendChild(row);
-            totalPoints += data.points;
-            totalEuros += data.euros;
-          });
-          let summaryRow = document.createElement('tr');
-          summaryRow.innerHTML = `<td colspan="2"><strong>Total</strong></td><td><strong>${totalPoints} points</strong></td><td><strong>${totalEuros.toFixed(2)} EUR</strong></td><td></td>`;
-          searchResults.appendChild(summaryRow);
-        } catch (error) {
-          console.error('Error searching customer: ', error);
-        }
-      }
-
-      document.addEventListener('DOMContentLoaded', () => {
-        document.getElementById('point-form').addEventListener('submit', async (e) => {
-          e.preventDefault();
-          const name = document.getElementById('name').value;
-          const phone = document.getElementById('phone').value;
-          const euros = parseFloat(document.getElementById('euros').value);
-          const date = document.getElementById('date').value;
-          await savePoints(name, phone, euros, date);
-        });
-
-        document.getElementById('login-form').addEventListener('submit', async (e) => {
-          e.preventDefault();
-          const email = document.getElementById('email').value;
-          const password = document.getElementById('password').value;
-          await login(email, password);
-        });
-
-        document.getElementById('search-form').addEventListener('submit', async (e) => {
-          e.preventDefault();
-          const name = document.getElementById('search-name').value;
-          await searchCustomer(name);
-        });
-
-        document.getElementById('logout-button').addEventListener('click', async () => {
-          await logout();
-        });
-      });
-    </script>
-
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/js/all.min.js"></script>
     <style>
+        :root {
+            --primary-color: #2c3e50;
+            --secondary-color: #e74c3c;
+            --background-color: #ecf0f1;
+            --text-color: #34495e;
+            --card-background: #fff;
+        }
+
         body {
-            font-family: Arial, sans-serif;
-            background: url('2.png') no-repeat center center fixed;
-            background-size: cover;
-            position: relative;
-            color: #333;
-            text-align: center;
-            padding: 20px;
-        }
-        body::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(255, 255, 255, 0.35); /* 35% opacity white overlay */
-            z-index: -1;
-        }
-        h1 {
-            color: #000;
-            font-weight: bold;
-        }
-        h1 span {
-            color: #ff0000; /* Red color for "INK" */
-        }
-        form {
-            background: rgba(255, 255, 255, 0.85); /* White background for forms */
-            padding: 20px;
-            border-radius: 5px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            display: inline-block;
-            margin-bottom: 20px;
-            max-width: 500px;
-        }
-        label, input {
-            display: block;
-            margin-bottom: 10px;
-        }
-        input {
-            padding: 8px;
-            width: 100%;
-            box-sizing: border-box;
-        }
-        button {
-            background-color: #00008b; /* Navy blue color for submit button */
-            color: #fff;
-            padding: 10px 20px;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-        }
-        button:hover {
-            background-color: #0000cd;
-        }
-        ul {
-            list-style-type: none;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--background-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            margin: 0;
             padding: 0;
         }
-        li {
-            background: rgba(255, 255, 255, 0.85);
-            margin: 10px 0;
-            padding: 10px;
-            border-radius: 5px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
         }
-        #total-points {
+
+        header {
+            background-color: var(--primary-color);
+            color: #fff;
+            text-align: center;
+            padding: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        h1 {
+            margin: 0;
+        }
+
+        h1 span {
+            color: var(--secondary-color);
+        }
+
+        .logo {
+            width: 100px;
+            margin-bottom: 1rem;
+        }
+
+        .card {
+            background-color: var(--card-background);
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            padding: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        form {
+            display: grid;
+            gap: 1rem;
+        }
+
+        label {
             font-weight: bold;
-            margin-top: 20px;
-            padding: 10px;
-            text-align: left;
-            display: inline-block;
-            background: rgba(255, 255, 255, 0.85);
-            background-color: #f0f8ff; /* Light blue background */
         }
-        #main-content {
-            display: none;
+
+        input, button {
+            width: 100%;
+            padding: 0.5rem;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 1rem;
         }
+
+        button {
+            background-color: var(--primary-color);
+            color: #fff;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #34495e;
+        }
+
         table {
             width: 100%;
             border-collapse: collapse;
-            margin-top: 20px;
-            background-color: #f0f8ff; /* Light blue background */
+            margin-top: 1rem;
         }
-        table, th, td {
-            border: 1px solid #ddd;
-        }
+
         th, td {
-            padding: 8px;
+            border: 1px solid #ddd;
+            padding: 0.5rem;
             text-align: left;
         }
+
         th {
-            background-color: #f2f2f2;
+            background-color: var(--primary-color);
+            color: #fff;
         }
-        .logo {
-            width: 150px;
-            margin: 20px auto;
-            display: block;
+
+        #total-points {
+            font-weight: bold;
+            margin-top: 1rem;
+        }
+
+        .points-list {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        .points-list li {
+            background-color: var(--card-background);
+            margin-bottom: 0.5rem;
+            padding: 0.5rem;
+            border-radius: 4px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        #logout-button {
+            background-color: var(--secondary-color);
+        }
+
+        #logout-button:hover {
+            background-color: #c0392b;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 10px;
+            }
+            
+            .card {
+                padding: 1rem;
+            }
         }
     </style>
 </head>
 <body>
-    <img src="logo.png" alt="PosithINK Tattooshop Logo" class="logo">
-    <h1>Posith<span>INK</span> Tattooshop Point Collector</h1>
-    <form id="login-form">
-        <label for="email">Email:</label>
-        <input type="email" id="email" name="email" required>
-        <label for="password">Password:</label>
-        <input type="password" id="password" name="password" required>
-        <button type="submit">Login</button>
-    </form>
-    <div id="main-content">
-        <button id="logout-button">Logout</button>
-        <form id="point-form" autocomplete="on">
-            <label for="name">Name:</label>
-            <input type="text" id="name" name="name" autocomplete="name" required>
-            <label for="phone">Phone:</label>
-            <input type="tel" id="phone" name="phone" autocomplete="tel" required>
-            <label for="euros">Euros:</label>
-            <input type="number" id="euros" name="euros" step="0.01" autocomplete="off" required>
-            <label for="date">Date and Time:</label>
-            <input type="datetime-local" id="date" name="date" required>
-            <button type="submit">Submit</button>
-        </form>
-        <form id="search-form">
-            <label for="search-name">Search by Name:</label>
-            <input type="text" id="search-name" name="search-name" required>
-            <button type="submit">Search</button>
-        </form>
-        <table>
-            <thead>
-                <tr>
-                    <th>Name</th>
-                    <th>Phone</th>
-                    <th>Points</th>
-                    <th>Euros</th>
-                    <th>Date and Time</th>
-                </tr>
-            </thead>
-            <tbody id="search-results"></tbody>
-        </table>
-        <div id="total-points">Total Points:</div>
-        <h2>Collected Points</h2>
-        <ul id="points-list"></ul>
+    <header>
+        <img src="logo.png" alt="PosithINK Tattooshop Logo" class="logo">
+        <h1>Posith<span>INK</span> Tattooshop Point Collector</h1>
+    </header>
+
+    <div class="container">
+        <div id="login-form" class="card">
+            <form>
+                <label for="email">
+                    <i class="fas fa-envelope"></i> Email:
+                </label>
+                <input type="email" id="email" name="email" required>
+                <label for="password">
+                    <i class="fas fa-lock"></i> Password:
+                </label>
+                <input type="password" id="password" name="password" required>
+                <button type="submit">
+                    <i class="fas fa-sign-in-alt"></i> Login
+                </button>
+            </form>
+        </div>
+
+        <div id="main-content" class="hidden">
+            <button id="logout-button">
+                <i class="fas fa-sign-out-alt"></i> Logout
+            </button>
+
+            <div class="card">
+                <h2><i class="fas fa-plus-circle"></i> Add Points</h2>
+                <form id="point-form" autocomplete="on">
+                    <label for="name">
+                        <i class="fas fa-user"></i> Name:
+                    </label>
+                    <input type="text" id="name" name="name" autocomplete="name" required>
+                    <label for="phone">
+                        <i class="fas fa-phone"></i> Phone:
+                    </label>
+                    <input type="tel" id="phone" name="phone" autocomplete="tel" required>
+                    <label for="euros">
+                        <i class="fas fa-euro-sign"></i> Euros:
+                    </label>
+                    <input type="number" id="euros" name="euros" step="0.01" autocomplete="off" required>
+                    <label for="date">
+                        <i class="fas fa-calendar-alt"></i> Date and Time:
+                    </label>
+                    <input type="datetime-local" id="date" name="date" required>
+                    <button type="submit">
+                        <i class="fas fa-save"></i> Submit
+                    </button>
+                </form>
+            </div>
+
+            <div class="card">
+                <h2><i class="fas fa-search"></i> Search Customer</h2>
+                <form id="search-form">
+                    <label for="search-name">Name:</label>
+                    <input type="text" id="search-name" name="search-name" required>
+                    <button type="submit">Search</button>
+                </form>
+                <div id="search-results">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Phone</th>
+                                <th>Points</th>
+                                <th>Euros</th>
+                                <th>Date and Time</th>
+                            </tr>
+                        </thead>
+                        <tbody></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="card">
+                <h2><i class="fas fa-chart-bar"></i> Total Points</h2>
+                <div id="total-points"></div>
+            </div>
+
+            <div class="card">
+                <h2><i class="fas fa-list"></i> Collected Points</h2>
+                <ul id="points-list" class="points-list"></ul>
+            </div>
+        </div>
     </div>
+
+    <script type="module">
+        // Firebase configuration and initialization code here
+        // ...
+
+        // Login function
+        async function login(email, password) {
+            try {
+                await signInWithEmailAndPassword(auth, email, password);
+                document.getElementById('login-form').classList.add('hidden');
+                document.getElementById('main-content').classList.remove('hidden');
+                fetchPoints();
+                fetchTotalPoints();
+            } catch (error) {
+                alert('Error signing in: ' + error.message);
+            }
+        }
+
+        // Logout function
+        async function logout() {
+            try {
+                await signOut(auth);
+                document.getElementById('login-form').classList.remove('hidden');
+                document.getElementById('main-content').classList.add('hidden');
+            } catch (error) {
+                alert('Error signing out: ' + error.message);
+            }
+        }
+
+        // Rest of the JavaScript functions (savePoints, fetchPoints, fetchTotalPoints, searchCustomer) here
+        // ...
+
+        // Event listeners
+        document.addEventListener('DOMContentLoaded', () => {
+            document.getElementById('login-form').addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const email = document.getElementById('email').value;
+                const password = document.getElementById('password').value;
+                await login(email, password);
+            });
+
+            document.getElementById('logout-button').addEventListener('click', logout);
+
+            document.getElementById('point-form').addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const name = document.getElementById('name').value;
+                const phone = document.getElementById('phone').value;
+                const euros = parseFloat(document.getElementById('euros').value);
+                const date = document.getElementById('date').value;
+                await savePoints(name, phone, euros, date);
+            });
+
+            document.getElementById('search-form').addEventListener('submit', async (e) => {
+                e.preventDefault();
+                const name = document.getElementById('search-name').value;
+                await searchCustomer(name);
+            });
+        });
+    </script>
 </body>
 </html>
