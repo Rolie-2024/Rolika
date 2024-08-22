@@ -1,32 +1,76 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <!-- ... (meglévő head tartalom) ... -->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PosithINK Tattoo Shop Point Collector</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/js/all.min.js"></script>
+    <style>
+        /* ... (meglévő CSS kód) ... */
+    </style>
 </head>
 <body>
-    <!-- ... (meglévő body tartalom) ... -->
+    <header>
+        <img src="logo.png" alt="PosithINK Tattooshop Logo" class="logo">
+        <h1>Posith<span>INK</span> Tattooshop Point Collector</h1>
+    </header>
+
+    <div class="container">
+        <div id="login-form" class="card">
+            <form>
+                <label for="email">
+                    <i class="fas fa-envelope"></i> Email:
+                </label>
+                <input type="email" id="email" name="email" required>
+                <label for="password">
+                    <i class="fas fa-lock"></i> Password:
+                </label>
+                <input type="password" id="password" name="password" required>
+                <button type="submit">
+                    <i class="fas fa-sign-in-alt"></i> Login
+                </button>
+            </form>
+        </div>
+
+        <div id="main-content" class="hidden">
+            <!-- ... (meglévő HTML kód a main-content részhez) ... -->
+        </div>
+    </div>
 
     <script type="module">
+        // Hibakeresési segéd függvény
+        function logError(message, error) {
+            console.error(message, error);
+            alert(message + ': ' + error.message);
+        }
+
         // Firebase importok
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.4/firebase-app.js";
-        import { getFirestore, collection, addDoc, getDocs, query, where, orderBy } from "https://www.gstatic.com/firebasejs/10.12.4/firebase-firestore.js";
-        import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.4/firebase-auth.js";
+        let app, db, auth;
+        try {
+            const { initializeApp } = await import("https://www.gstatic.com/firebasejs/10.12.4/firebase-app.js");
+            const { getFirestore, collection, addDoc, getDocs, query, where, orderBy } = await import("https://www.gstatic.com/firebasejs/10.12.4/firebase-firestore.js");
+            const { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut } = await import("https://www.gstatic.com/firebasejs/10.12.4/firebase-auth.js");
 
-        // Firebase konfiguráció
-        const firebaseConfig = {
-            apiKey: "AIzaSyDVahS6mRJVAoMYXuufHzMfu1YZ8GlkV7k",
-            authDomain: "point-collector-8f37f.firebaseapp.com",
-            projectId: "point-collector-8f37f",
-            storageBucket: "point-collector-8f37f.appspot.com",
-            messagingSenderId: "381353241547",
-            appId: "1:381353241547:web:9a85b70b419c32811ee44e",
-            measurementId: "G-3BWW13LHSD"
-        };
+            // Firebase konfiguráció
+            const firebaseConfig = {
+                apiKey: "AIzaSyDVahS6mRJVAoMYXuufHzMfu1YZ8GlkV7k",
+                authDomain: "point-collector-8f37f.firebaseapp.com",
+                projectId: "point-collector-8f37f",
+                storageBucket: "point-collector-8f37f.appspot.com",
+                messagingSenderId: "381353241547",
+                appId: "1:381353241547:web:9a85b70b419c32811ee44e",
+                measurementId: "G-3BWW13LHSD"
+            };
 
-        // Firebase inicializálása
-        const app = initializeApp(firebaseConfig);
-        const db = getFirestore(app);
-        const auth = getAuth(app);
+            // Firebase inicializálása
+            app = initializeApp(firebaseConfig);
+            db = getFirestore(app);
+            auth = getAuth(app);
+
+            console.log("Firebase sikeresen inicializálva");
+        } catch (error) {
+            logError('Hiba történt a Firebase inicializálása során', error);
+        }
 
         // Bejelentkezési funkció
         async function login(email, password) {
@@ -34,169 +78,21 @@
                 await signInWithEmailAndPassword(auth, email, password);
                 document.getElementById('login-form').classList.add('hidden');
                 document.getElementById('main-content').classList.remove('hidden');
-                fetchPoints();
-                fetchTotalPoints();
+                console.log("Sikeres bejelentkezés");
             } catch (error) {
-                console.error('Bejelentkezési hiba:', error);
-                alert('Bejelentkezési hiba: ' + error.message);
+                logError('Bejelentkezési hiba', error);
             }
         }
 
-        // Kijelentkezési funkció
-        async function logout() {
-            try {
-                await signOut(auth);
-                document.getElementById('login-form').classList.remove('hidden');
-                document.getElementById('main-content').classList.add('hidden');
-            } catch (error) {
-                console.error('Kijelentkezési hiba:', error);
-                alert('Kijelentkezési hiba: ' + error.message);
-            }
-        }
-
-        // Autentikációs állapot figyelése
-        onAuthStateChanged(auth, (user) => {
-            if (user) {
-                document.getElementById('login-form').classList.add('hidden');
-                document.getElementById('main-content').classList.remove('hidden');
-                fetchPoints();
-                fetchTotalPoints();
-            } else {
-                document.getElementById('login-form').classList.remove('hidden');
-                document.getElementById('main-content').classList.add('hidden');
-            }
+        // Event listener a bejelentkezési űrlaphoz
+        document.getElementById('login-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            await login(email, password);
         });
 
-        // Pontok mentése funkció
-        async function savePoints(name, phone, euros, date) {
-            const points = Math.floor(euros / 10);
-            try {
-                await addDoc(collection(db, 'points'), {
-                    name: name,
-                    phone: phone,
-                    points: points,
-                    euros: euros,
-                    date: date,
-                    timestamp: new Date()
-                });
-                console.log('Pontok sikeresen elmentve');
-                document.getElementById('point-form').reset();
-                fetchPoints();
-                fetchTotalPoints();
-            } catch (error) {
-                console.error('Hiba a pontok mentése közben:', error);
-                alert('Hiba a pontok mentése közben: ' + error.message);
-            }
-        }
-
-        // Pontok lekérdezése funkció
-        async function fetchPoints() {
-            try {
-                const q = query(collection(db, 'points'), orderBy('timestamp', 'desc'));
-                const querySnapshot = await getDocs(q);
-                let pointsList = document.getElementById('points-list');
-                pointsList.innerHTML = '';
-                querySnapshot.forEach((doc) => {
-                    const data = doc.data();
-                    const euros = data.euros !== undefined ? data.euros.toFixed(2) : '0.00';
-                    let li = document.createElement('li');
-                    li.innerHTML = `<strong>${data.name}</strong> - Pontok: ${data.points} (Euro: ${euros})`;
-                    pointsList.appendChild(li);
-                });
-            } catch (error) {
-                console.error('Hiba a pontok lekérdezése közben:', error);
-                alert('Hiba a pontok lekérdezése közben: ' + error.message);
-            }
-        }
-
-        // Összes pont lekérdezése funkció
-        async function fetchTotalPoints() {
-            try {
-                const q = query(collection(db, 'points'));
-                const querySnapshot = await getDocs(q);
-                let customerPoints = {};
-                querySnapshot.forEach((doc) => {
-                    const data = doc.data();
-                    const euros = data.euros !== undefined ? data.euros : 0;
-                    if (customerPoints[data.name]) {
-                        customerPoints[data.name].points += data.points;
-                        customerPoints[data.name].euros += euros;
-                    } else {
-                        customerPoints[data.name] = { points: data.points, euros: euros };
-                    }
-                });
-                updateTotalPoints(customerPoints);
-            } catch (error) {
-                console.error('Hiba az összes pont lekérdezése közben:', error);
-                alert('Hiba az összes pont lekérdezése közben: ' + error.message);
-            }
-        }
-
-        // Összes pont frissítése funkció
-        function updateTotalPoints(customerPoints) {
-            let totalPointsDiv = document.getElementById('total-points');
-            totalPointsDiv.innerHTML = '';
-            for (const [name, data] of Object.entries(customerPoints)) {
-                const euros = data.euros !== undefined ? data.euros.toFixed(2) : '0.00';
-                let div = document.createElement('div');
-                div.innerHTML = `<strong>${name}</strong>: ${data.points} pont (${euros} EUR)`;
-                totalPointsDiv.appendChild(div);
-            }
-        }
-
-        // Ügyfél keresése funkció
-        async function searchCustomer(name) {
-            try {
-                const q = query(collection(db, 'points'), where('name', '==', name));
-                const querySnapshot = await getDocs(q);
-                let searchResults = document.querySelector('#search-results tbody');
-                searchResults.innerHTML = '';
-                let totalPoints = 0;
-                let totalEuros = 0;
-                querySnapshot.forEach((doc) => {
-                    const data = doc.data();
-                    const euros = data.euros !== undefined ? data.euros.toFixed(2) : '0.00';
-                    let row = document.createElement('tr');
-                    row.innerHTML = `<td>${data.name}</td><td>${data.phone}</td><td>${data.points}</td><td>${euros}</td><td>${data.date}</td>`;
-                    searchResults.appendChild(row);
-                    totalPoints += data.points;
-                    totalEuros += data.euros;
-                });
-                let summaryRow = document.createElement('tr');
-                summaryRow.innerHTML = `<td colspan="2"><strong>Összesen</strong></td><td><strong>${totalPoints} pont</strong></td><td><strong>${totalEuros.toFixed(2)} EUR</strong></td><td></td>`;
-                searchResults.appendChild(summaryRow);
-            } catch (error) {
-                console.error('Hiba az ügyfél keresése közben:', error);
-                alert('Hiba az ügyfél keresése közben: ' + error.message);
-            }
-        }
-
-        // Event listeners
-        document.addEventListener('DOMContentLoaded', () => {
-            document.getElementById('login-form').addEventListener('submit', async (e) => {
-                e.preventDefault();
-                const email = document.getElementById('email').value;
-                const password = document.getElementById('password').value;
-                await login(email, password);
-            });
-
-            document.getElementById('logout-button').addEventListener('click', logout);
-
-            document.getElementById('point-form').addEventListener('submit', async (e) => {
-                e.preventDefault();
-                const name = document.getElementById('name').value;
-                const phone = document.getElementById('phone').value;
-                const euros = parseFloat(document.getElementById('euros').value);
-                const date = document.getElementById('date').value;
-                await savePoints(name, phone, euros, date);
-            });
-
-            document.getElementById('search-form').addEventListener('submit', async (e) => {
-                e.preventDefault();
-                const name = document.getElementById('search-name').value;
-                await searchCustomer(name);
-            });
-        });
+        console.log("Script betöltése befejeződött");
     </script>
 </body>
 </html>
